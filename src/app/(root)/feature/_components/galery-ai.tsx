@@ -1,13 +1,16 @@
-"use client";
-
 import React from "react";
 import ParallaxImages from "@/app/(root)/feature/_components/parallax-images";
 import { CenterImage } from "@/app/(root)/feature/_components/center-image";
 import Particles from "@/components/particles";
+import { SECTION_HEIGHT } from "@/assets/data";
+import { plaiceholderImageRemote } from "@/lib/plaiceholder-img";
 
-export const SECTION_HEIGHT = 1500;
+const GaleryAi: React.FC = async () => {
+  const src =
+    "https://images.unsplash.com/photo-1460186136353-977e9d6085a1?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D";
 
-const GaleryAi = () => {
+  const base64 = await plaiceholderImageRemote(src);
+
   return (
     <section>
       <Particles
@@ -18,7 +21,7 @@ const GaleryAi = () => {
         style={{ height: `calc(${SECTION_HEIGHT}px + 100vh)` }}
         className="relative w-full"
       >
-        <CenterImage />
+        <CenterImage src={src} base64={base64} />
 
         <ParallaxImages />
 
