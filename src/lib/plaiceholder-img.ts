@@ -19,6 +19,5 @@ export async function plaiceholderImageLocal(src: string) {
         Buffer.from(await res.arrayBuffer()),
       );
   const { base64 } = await getPlaiceholder(buffer, { size: 32 });
-
   return base64;
 }

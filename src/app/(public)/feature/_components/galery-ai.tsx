@@ -1,7 +1,6 @@
 import React from "react";
-import ParallaxImages from "@/app/(root)/feature/_components/parallax-images";
-import { CenterImage } from "@/app/(root)/feature/_components/center-image";
-import Particles from "@/components/particles";
+import ParallaxImages from "@/app/(public)/feature/_components/parallax-images";
+import { CenterImage } from "@/app/(public)/feature/_components/center-image";
 import { SECTION_HEIGHT } from "@/assets/data";
 import { plaiceholderImageRemote } from "@/lib/plaiceholder-img";
 
@@ -13,10 +12,6 @@ const GaleryAi: React.FC = async () => {
 
   return (
     <section>
-      <Particles
-        className="fixed inset-0 -z-10 animate-fade-in"
-        quantity={100}
-      />
       <div
         style={{ height: `calc(${SECTION_HEIGHT}px + 100vh)` }}
         className="relative w-full"

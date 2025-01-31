@@ -3,6 +3,8 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "@/styles/globals.css";
 import ReactLenis from "lenis/react";
 import NextTopLoader from "nextjs-toploader";
+import { ThemeProvider } from "@/components/theme-provider";
+import Particles from "@/components/particles";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -28,19 +30,31 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className="dark">
       <body
         className={`${geistSans.variable} ${geistMono.variable} bg-zinc-950 antialiased`}
       >
         <NextTopLoader />
-        <ReactLenis
-          root
-          options={{
-            lerp: 0.05,
-          }}
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="dark"
+          enableSystem
+          disableTransitionOnChange
         >
-          {children}
-        </ReactLenis>
+          <ReactLenis
+            root
+            options={{
+              lerp: 0.05,
+            }}
+          >
+            <Particles
+              className="fixed inset-0 -z-10 animate-fade-in"
+              quantity={100}
+            />
+
+            {children}
+          </ReactLenis>
+        </ThemeProvider>
       </body>
     </html>
   );

@@ -14,6 +14,7 @@ export default {
         title: "title 3s ease-out forwards",
         "fade-left": "fade-left 3s ease-in-out forwards",
         "fade-right": "fade-right 3s ease-in-out forwards",
+        shimmer: "shimmer 2s linear infinite",
       },
 
       transitionDuration: {
@@ -21,6 +22,15 @@ export default {
       },
 
       keyframes: {
+        shimmer: {
+          from: {
+            backgroundPosition: "0 0",
+          },
+          to: {
+            backgroundPosition: "-200% 0",
+          },
+        },
+
         "fade-in": {
           "0%": {
             opacity: "0%",

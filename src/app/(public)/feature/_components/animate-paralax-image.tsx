@@ -32,7 +32,7 @@ export const AnimateParallaxImg: React.FC<TAnimateParallaxImg> = ({
   const transform = useMotionTemplate`translateY(${y}px) scale(${scale})`;
 
   return (
-    <motion.div ref={ref} style={{ transform, opacity }}>
+    <motion.div ref={ref} style={{ transform, opacity }} className="w-auto">
       <Image
         src={src}
         alt={alt}
