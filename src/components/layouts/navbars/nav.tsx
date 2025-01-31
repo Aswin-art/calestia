@@ -4,11 +4,14 @@ import { routeNav } from "@/assets/data";
 import { ArrowLeft } from "lucide-react";
 import { useMotionValueEvent, useScroll } from "motion/react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import React, { useState } from "react";
 
 export const Navigation: React.FC = () => {
   const { scrollY } = useScroll();
   const [isIntersecting, setIntersecting] = useState(true);
+  const router = usePathname();
+  const nav = routeNav.filter(({ href }) => href !== router);
 
   useMotionValueEvent(scrollY, "change", (latest) => {
     setIntersecting(latest < 50);
@@ -24,7 +27,7 @@ export const Navigation: React.FC = () => {
       >
         <div className="container mx-auto flex flex-row-reverse items-center justify-between p-6">
           <div className="flex justify-between gap-8">
-            {routeNav.map(({ href, name }, idx) => (
+            {nav.map(({ href, name }, idx) => (
               <Link
                 key={idx}
                 href={href}

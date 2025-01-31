@@ -1,6 +1,6 @@
 export const routeNav = [
-  { name: "Feature", href: "/feature" },
   { name: "About Us", href: "/about-us" },
+  { name: "Feature", href: "/feature" },
   { name: "Gao", href: "/gao" },
 ];
 

@@ -9,7 +9,7 @@ export default function AboutUs() {
           <div className="flex h-full flex-col lg:flex-row">
             {/* Left content */}
             <div className="relative z-10 flex flex-1 basis-full flex-col justify-center p-8 lg:basis-2/5">
-              <h2 className="bg-gradient-to-b from-neutral-50 to-neutral-400 bg-clip-text text-4xl font-bold text-transparent md:text-5xl">
+              <h2 className="bg-gradient-to-b from-neutral-50 to-neutral-400 bg-clip-text text-3xl font-bold text-transparent md:text-5xl lg:text-4xl">
                 About Us
               </h2>
               <p className="mt-4 max-w-lg text-neutral-300">
