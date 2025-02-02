@@ -1,4 +1,5 @@
 import { routeNav } from "@/assets/data";
+import { ConnectButton } from "@rainbow-me/rainbowkit";
 import Link from "next/link";
 import React from "react";
 
@@ -29,9 +30,12 @@ const HeroRoot: React.FC = () => {
         <h2 className="text-sm text-zinc-500">
           I&apos;m building AI tools to solve problem for developers.
         </h2>
-        <button className="animate-shimmer inline-flex h-12 items-center justify-center rounded-md border border-slate-800 bg-[linear-gradient(110deg,#000103,45%,#1e2631,55%,#000103)] bg-[length:200%_100%] px-6 font-medium text-zinc-500 transition-colors hover:text-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 focus:ring-offset-slate-50">
-          Action Click
-        </button>
+        <div className="flex gap-4 pt-5">
+          <button className="inline-flex h-12 animate-shimmer items-center justify-center rounded-md border border-slate-800 bg-[linear-gradient(110deg,#000103,45%,#1e2631,55%,#000103)] bg-[length:200%_100%] px-6 font-medium text-zinc-500 transition-colors hover:text-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 focus:ring-offset-slate-50">
+            Action Click
+          </button>
+          <ConnectButton label="Hubungkan Dompet" />
+        </div>
       </div>
     </section>
   );

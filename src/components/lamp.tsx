@@ -2,8 +2,6 @@
 
 import { motion } from "framer-motion";
 
-//    <div className="absolute top-0 isolate z-10 flex w-full flex-1 scale-[0.35] items-start justify-center sm:scale-[0.60] md:scale-75 lg:scale-100"></div>
-
 const Lamp: React.FC = () => {
   return (
     <div className="absolute top-0 isolate z-10 flex w-full flex-1 scale-[0.35] items-start justify-center sm:scale-[0.60] md:scale-75 lg:scale-100">
