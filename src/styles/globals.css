@@ -73,4 +73,30 @@ body {
   .text-edge-outline {
     -webkit-text-stroke: 1px rgba(255, 255, 255, 0.3);
   }
+
+  .scroll-bar-history {
+    ::-webkit-scrollbar {
+      @apply h-2.5 w-2.5;
+    }
+
+    ::-webkit-scrollbar-track {
+      @apply bg-transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      @apply rounded-full border-[1px] border-solid border-transparent bg-border bg-clip-padding;
+    }
+  }
 }
+
+/* ::-webkit-scrollbar {
+  @apply h-2.5 w-2.5;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply rounded-full border-[1px] border-solid border-transparent bg-border bg-clip-padding;
+} */

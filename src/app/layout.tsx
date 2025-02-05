@@ -41,19 +41,19 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <ReactLenis
+          {/* <ReactLenis
             root
             options={{
               lerp: 0.05,
             }}
-          >
-            <Particles
-              className="fixed inset-0 -z-10 animate-fade-in"
-              quantity={100}
-            />
+          > */}
+          <Particles
+            className="fixed inset-0 -z-10 animate-fade-in"
+            quantity={100}
+          />
 
-            {children}
-          </ReactLenis>
+          {children}
+          {/* </ReactLenis> */}
         </ThemeProvider>
       </body>
     </html>
