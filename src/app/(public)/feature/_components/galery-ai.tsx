@@ -20,7 +20,7 @@ const GaleryAi: React.FC = async () => {
 
         <ParallaxImages />
 
-        <div className="absolute bottom-0 left-0 right-0 h-96 bg-gradient-to-b from-zinc-950/0 to-zinc-950" />
+        <div className="absolute bottom-0 left-0 right-0 h-96 bg-linear-to-b from-zinc-950/0 to-zinc-950" />
       </div>
     </section>
   );

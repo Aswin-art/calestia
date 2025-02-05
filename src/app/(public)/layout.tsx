@@ -1,4 +1,5 @@
 import { Navigation } from "@/components/layouts/navbars/nav";
+import ReactLenis from "lenis/react";
 import { Fragment } from "react";
 
 export default function PublicLayout({
@@ -8,8 +9,15 @@ export default function PublicLayout({
 }>) {
   return (
     <Fragment>
-      <Navigation />
-      {children}
+      <ReactLenis
+        root
+        options={{
+          lerp: 0.05,
+        }}
+      >
+        <Navigation />
+        {children}
+      </ReactLenis>
     </Fragment>
   );
 }

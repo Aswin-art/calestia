@@ -1,14 +1,17 @@
 "use client";
 
 import { useState, FormEvent } from "react";
-import { Paperclip, Mic, CornerDownLeft } from "lucide-react";
+import { Paperclip, Mic, SendHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
-
 import { ChatMessageList } from "@/components/ui/chat-message-list";
-import { ChatBubble, ChatBubbleAvatar, ChatBubbleMessage } from "./chat-bubble";
-import { ChatInput } from "./chat-input";
+import {
+  ChatBubble,
+  ChatBubbleAvatar,
+  ChatBubbleMessage,
+} from "@/app/(private)/_components/chat-bubble";
+import { TextAreatAutoGrowing } from "@/components/ui/text-area-autogrowing";
 
-export function ChatMessageListDemo() {
+export function ChatMessageView() {
   const [messages, setMessages] = useState([
     {
       id: 1,
@@ -68,7 +71,7 @@ export function ChatMessageListDemo() {
 
   return (
     <>
-      <div className="relative flex h-full flex-col justify-between rounded-lg border">
+      <div className="relative flex h-full flex-col justify-between">
         <div className="">
           <ChatMessageList>
             {messages.map((message) => (
@@ -105,26 +108,20 @@ export function ChatMessageListDemo() {
             )}
           </ChatMessageList>
         </div>
-        <div className="sticky bottom-0">
-          <div
-            style={{
-              background:
-                "linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.5) 60%)",
+        <div className="sticky bottom-0 z-10 pb-10">
+          <div className="h-10 w-full rounded-md bg-[linear-gradient(to_bottom,rgba(0,0,0,0)_0%,rgba(23,23,23,0.5)_60%)] before:absolute before:inset-x-0 before:bottom-0 before:-z-10 before:h-[50%] before:bg-neutral-900"></div>
 
-              height: "40px",
-            }}
-            className=""
-          ></div>
           <form
             onSubmit={handleSubmit}
-            className="w-full rounded-lg border bg-neutral-900 p-1 shadow-xl shadow-black focus:outline-0"
+            className="w-full space-y-2.5 rounded-lg border border-neutral-600 bg-neutral-900 p-1 focus:outline-0"
           >
-            <ChatInput
+            <TextAreatAutoGrowing
+              setText={setInput}
               value={input}
-              onChange={(e) => setInput(e.target.value)}
               placeholder="Type your message..."
-              className="min-h-12 resize-none border-0 bg-neutral-900 p-3 shadow-none focus:outline-0"
+              className="max-h-32 overflow-y-auto border-none bg-neutral-900 p-3 focus:ring-0 md:max-h-40 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300 dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 dark:[&::-webkit-scrollbar-track]:bg-neutral-700"
             />
+
             <div className="flex items-center justify-between p-3 pt-0">
               <div className="flex">
                 <Button
@@ -145,9 +142,11 @@ export function ChatMessageListDemo() {
                   <Mic className="size-4" />
                 </Button>
               </div>
-              <Button type="submit" size="sm" className="ml-auto gap-1.5">
-                Send Message
-                <CornerDownLeft className="size-3.5" />
+              <Button
+                type="submit"
+                className="size-14 cursor-pointer rounded-full border-0 border-solid border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.1)] text-[rgba(255,255,255,0.8)] uppercase no-underline backdrop-blur-[30px] hover:bg-[rgba(255,255,255,0.2)]"
+              >
+                <SendHorizontal size="25px" />
               </Button>
             </div>
           </form>

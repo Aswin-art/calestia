@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "@/styles/globals.css";
-import ReactLenis from "lenis/react";
 import NextTopLoader from "nextjs-toploader";
 import { ThemeProvider } from "@/components/theme-provider";
 import Particles from "@/components/particles";
@@ -41,19 +40,12 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          {/* <ReactLenis
-            root
-            options={{
-              lerp: 0.05,
-            }}
-          > */}
           <Particles
-            className="fixed inset-0 -z-10 animate-fade-in"
+            className="animate-fade-in fixed inset-0 -z-10"
             quantity={100}
           />
 
           {children}
-          {/* </ReactLenis> */}
         </ThemeProvider>
       </body>
     </html>

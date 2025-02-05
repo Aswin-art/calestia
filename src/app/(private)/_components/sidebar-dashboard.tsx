@@ -4,40 +4,37 @@ import React, { useState } from "react";
 import { Sidebar, SidebarBody, SidebarLink } from "@/components/ui/sidebar";
 import { LayoutDashboard, UserCog, Settings, LogOut } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Dashboard } from "./dashboard";
 import { Logo, LogoIcon } from "./logo-dashboard";
-
 import HistoryChat from "./history-chat";
-import { ChatMessageListDemo } from "./chat-message-list";
 
-export function SidebarDashboard() {
+export function SidebarDashboard({ children }: { children: React.ReactNode }) {
   const links = [
     {
       label: "Dashboard",
       href: "#",
       icon: (
-        <LayoutDashboard className="h-5 w-5 flex-shrink-0 text-neutral-700 dark:text-neutral-200" />
+        <LayoutDashboard className="h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
       ),
     },
     {
       label: "Profile",
       href: "#",
       icon: (
-        <UserCog className="h-5 w-5 flex-shrink-0 text-neutral-700 dark:text-neutral-200" />
+        <UserCog className="h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
       ),
     },
     {
       label: "Settings",
       href: "#",
       icon: (
-        <Settings className="h-5 w-5 flex-shrink-0 text-neutral-700 dark:text-neutral-200" />
+        <Settings className="h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
       ),
     },
     {
       label: "Logout",
       href: "#",
       icon: (
-        <LogOut className="h-5 w-5 flex-shrink-0 text-neutral-700 dark:text-neutral-200" />
+        <LogOut className="h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
       ),
     },
   ];
@@ -46,13 +43,13 @@ export function SidebarDashboard() {
   return (
     <div
       className={cn(
-        "mx-auto flex w-full flex-col overflow-hidden rounded-md border border-neutral-200 bg-gray-100 dark:border-neutral-700 dark:bg-neutral-800 md:flex-row",
+        "mx-auto flex w-full flex-col overflow-hidden rounded-md border border-neutral-200 bg-gray-100 md:flex-row dark:border-neutral-700 dark:bg-neutral-800",
         "h-dvh",
       )}
     >
       <Sidebar open={open} setOpen={setOpen}>
-        <SidebarBody className="justify-between gap-10">
-          <div className="flex flex-1 flex-col justify-normal gap-y-8 overflow-y-auto overflow-x-hidden md:justify-between">
+        <SidebarBody className="justify-between gap-10 pr-0.5">
+          <div className="flex flex-1 flex-col justify-normal gap-y-8 overflow-x-hidden overflow-y-auto md:justify-between">
             {open ? <Logo /> : <LogoIcon />}
 
             <HistoryChat />
@@ -70,7 +67,7 @@ export function SidebarDashboard() {
                 icon: (
                   <Image
                     src="https://assets.aceternity.com/manu.png"
-                    className="h-7 w-7 flex-shrink-0 rounded-full"
+                    className="h-7 w-7 shrink-0 rounded-full"
                     width={50}
                     height={50}
                     alt="Avatar"
@@ -82,15 +79,7 @@ export function SidebarDashboard() {
         </SidebarBody>
       </Sidebar>
 
-      <div className="h-full w-full overflow-y-auto rounded-tl-2xl border border-neutral-200 bg-white px-2 pt-2 dark:border-neutral-700 dark:bg-neutral-900 md:px-10 md:pb-0 md:pt-10">
-        <div className="relative mx-auto h-full w-full max-w-screen-lg">
-          <ChatMessageListDemo />
-
-          {/* <ChatMessageListDemo />
-
-          <ChatMessageListDemo /> */}
-        </div>
-      </div>
+      {children}
     </div>
   );
 }
