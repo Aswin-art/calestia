@@ -1,7 +1,7 @@
 import React, { Fragment } from "react";
-import { Schedule } from "@/app/(public)/gao/_components/schedules";
+import { Schedule } from "@/app/(public)/dao/_components/schedules";
 
-export default function Gao() {
+export default function PageDao() {
   return (
     <Fragment>
       <Schedule />

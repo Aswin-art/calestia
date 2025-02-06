@@ -48,14 +48,14 @@ export const CenterImage: React.FC<{ src: string; base64: string }> = ({
         />
 
         <div className="relative size-full">
-          <h1 className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-wrap text-center text-3xl leading-snug text-white xl:w-1/4 xl:text-5xl">
+          <h1 className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center text-3xl leading-snug text-wrap text-white xl:w-1/4 xl:text-5xl">
             Scale your{" "}
             <span className="relative">
               Marketing
               <svg
                 viewBox="0 0 286 73"
                 fill="none"
-                className="absolute -left-2 -right-2 -top-2 bottom-0 translate-y-1"
+                className="absolute -top-2 -right-2 bottom-0 -left-2 translate-y-1"
               >
                 <motion.path
                   initial={{ pathLength: 0 }}

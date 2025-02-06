@@ -9,7 +9,7 @@ export function SplineSceneBasic() {
         <div className="flex h-full">
           {/* Left content */}
           <div className="relative z-10 flex flex-1 flex-col justify-center p-8">
-            <h2 className="bg-gradient-to-b from-neutral-50 to-neutral-400 bg-clip-text text-4xl font-bold text-transparent md:text-5xl">
+            <h2 className="bg-linear-to-b from-neutral-50 to-neutral-400 bg-clip-text text-4xl font-bold text-transparent md:text-5xl">
               About Us
             </h2>
             <p className="mt-4 max-w-lg text-neutral-300">
