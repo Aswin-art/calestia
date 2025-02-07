@@ -18,6 +18,7 @@ model Users {
   wallet_address String      @unique
   subscription   Int?
   UserVotes      UserVotes[]
+  Sessions       Sessions[]
 
   @@map("users")
 }
@@ -42,4 +43,20 @@ model UserVotes {
   votes       Boolean
 
   @@map("user_votes")
+}
+
+model Sessions {
+  id      String  @id @default(cuid())
+  user_id String
+  user    Users   @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  title   String
+  Chats   Chats[]
+}
+
+model Chats {
+  id         String   @id @default(cuid())
+  session_id String
+  session    Sessions @relation(fields: [session_id], references: [id], onDelete: Cascade)
+  question   String
+  answer     String
 }
