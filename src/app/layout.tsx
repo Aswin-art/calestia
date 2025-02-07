@@ -3,8 +3,6 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "@/styles/globals.css";
 import NextTopLoader from "nextjs-toploader";
 
-import Navbar from "@/components/navbar";
-
 import "@rainbow-me/rainbowkit/styles.css";
 import { Providers } from "./providers";
 
@@ -37,10 +35,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} bg-zinc-950 antialiased`}
       >
         <NextTopLoader />
-        <Providers>
-          <Navbar />
-          {children}
-        </Providers>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

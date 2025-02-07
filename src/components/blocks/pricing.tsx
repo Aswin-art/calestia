@@ -1,16 +1,18 @@
 "use client";
 
-import { buttonVariants } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
-import { Check, Star } from "lucide-react";
-import Link from "next/link";
+import { Check, Loader2, Star } from "lucide-react";
 import { useState, useRef } from "react";
 import confetti from "canvas-confetti";
 import NumberFlow from "@number-flow/react";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { useAccount, useWriteContract } from "wagmi";
+import config from "../../lib/config";
+import { addSubscription } from "../../../actions/users";
 
 interface PricingPlan {
   name: string;
@@ -38,6 +40,11 @@ export function Pricing({
   const [isMonthly, setIsMonthly] = useState(true);
   const isDesktop = useMediaQuery("(min-width: 768px)");
   const switchRef = useRef<HTMLButtonElement>(null);
+
+  const [loading, setLoading] = useState(false);
+
+  const { writeContract } = useWriteContract();
+  const { address } = useAccount();
 
   const handleToggle = (checked: boolean) => {
     setIsMonthly(!checked);
@@ -68,13 +75,78 @@ export function Pricing({
     }
   };
 
+  const handleAddSubscriptionUser = async (level: number) => {
+    if (!address || !level) return;
+    const req = await addSubscription(level, address);
+
+    if (req) {
+      setLoading(false);
+      console.log("Success");
+      return true;
+    } else {
+      console.log("Failed");
+      console.log(req);
+      return false;
+    }
+  };
+
+  const handleBuyPackage = async (name: string) => {
+    setLoading(true);
+    if (!address) return;
+    let level;
+    let price;
+
+    if (name === "STARTER") {
+      level = 2;
+      price = BigInt("200000000000000");
+    }
+
+    if (name === "PROFESSIONAL") {
+      level = 3;
+      price = BigInt("300000000000000");
+    }
+
+    if (name === "ENTERPRISE") {
+      level = 4;
+      price = BigInt("400000000000000");
+    }
+
+    if (!level || !price) {
+      console.log("Invalid package!");
+      return;
+    }
+
+    try {
+      writeContract(
+        {
+          abi: config.abi,
+          address: config.address as `0x${string}`,
+          functionName: "purchasePackage",
+          args: [level],
+          account: address,
+          value: price,
+        },
+        {
+          onSuccess: () => handleAddSubscriptionUser(level),
+          onError: (err) => {
+            console.log(err);
+            setLoading(false);
+          },
+        },
+      );
+    } catch (error) {
+      console.log("Transaction failed:", error);
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="container mx-auto py-20">
       <div className="mb-12 space-y-4 text-center">
         <h2 className="text-4xl font-bold tracking-tight text-white sm:text-5xl">
           {title}
         </h2>
-        <p className="whitespace-pre-line text-lg text-zinc-500">
+        <p className="text-lg whitespace-pre-line text-zinc-500">
           {description}
         </p>
       </div>
@@ -120,31 +192,31 @@ export function Pricing({
               opacity: { duration: 0.5 },
             }}
             className={cn(
-              `relative rounded-2xl border-[1px] bg-background p-6 text-center lg:flex lg:flex-col lg:justify-center`,
-              plan.isPopular ? "border-2 border-primary" : "border-border",
+              `bg-background relative rounded-2xl border-[1px] p-6 text-center lg:flex lg:flex-col lg:justify-center`,
+              plan.isPopular ? "border-primary border-2" : "border-border",
               "flex flex-col",
               !plan.isPopular && "mt-5",
               index === 0 || index === 2
-                ? "-translate-z-[50px] rotate-y-[10deg] z-0 translate-x-0 translate-y-0 transform"
+                ? "z-0 translate-x-0 translate-y-0 -translate-z-[50px] rotate-y-[10deg] transform"
                 : "z-10",
               index === 0 && "origin-right",
               index === 2 && "origin-left",
             )}
           >
             {plan.isPopular && (
-              <div className="absolute right-0 top-0 flex items-center rounded-bl-xl rounded-tr-xl bg-primary px-2 py-0.5">
-                <Star className="h-4 w-4 fill-current text-primary-foreground" />
-                <span className="ml-1 font-sans font-semibold text-primary-foreground">
+              <div className="bg-primary absolute top-0 right-0 flex items-center rounded-tr-xl rounded-bl-xl px-2 py-0.5">
+                <Star className="text-primary-foreground h-4 w-4 fill-current" />
+                <span className="text-primary-foreground ml-1 font-sans font-semibold">
                   Popular
                 </span>
               </div>
             )}
             <div className="flex flex-1 flex-col">
-              <p className="text-base font-semibold text-muted-foreground">
+              <p className="text-muted-foreground text-base font-semibold">
                 {plan.name}
               </p>
               <div className="mt-6 flex items-center justify-center gap-x-2">
-                <span className="text-5xl font-bold tracking-tight text-foreground">
+                <span className="text-foreground text-5xl font-bold tracking-tight">
                   <NumberFlow
                     value={
                       isMonthly ? Number(plan.price) : Number(plan.yearlyPrice)
@@ -164,20 +236,20 @@ export function Pricing({
                   />
                 </span>
                 {plan.period !== "Next 3 months" && (
-                  <span className="text-sm font-semibold leading-6 tracking-wide text-muted-foreground">
+                  <span className="text-muted-foreground text-sm leading-6 font-semibold tracking-wide">
                     / {plan.period}
                   </span>
                 )}
               </div>
 
-              <p className="text-xs leading-5 text-muted-foreground">
+              <p className="text-muted-foreground text-xs leading-5">
                 {isMonthly ? "billed monthly" : "billed annually"}
               </p>
 
               <ul className="mt-5 flex flex-col gap-2">
                 {plan.features.map((feature, idx) => (
                   <li key={idx} className="flex items-start gap-2">
-                    <Check className="mt-1 h-4 w-4 shrink-0 text-primary" />
+                    <Check className="text-primary mt-1 h-4 w-4 shrink-0" />
                     <span className="text-left">{feature}</span>
                   </li>
                 ))}
@@ -185,22 +257,21 @@ export function Pricing({
 
               <hr className="my-4 w-full" />
 
-              <Link
-                href={plan.href}
-                className={cn(
-                  buttonVariants({
-                    variant: "outline",
-                  }),
-                  "group relative w-full gap-2 overflow-hidden text-lg font-semibold tracking-tighter",
-                  "transform-gpu ring-offset-current transition-all duration-300 ease-out hover:bg-primary hover:text-primary-foreground hover:ring-2 hover:ring-primary hover:ring-offset-1",
-                  plan.isPopular
-                    ? "bg-primary text-primary-foreground"
-                    : "bg-background text-foreground",
-                )}
+              <Button
+                disabled={loading}
+                onClick={() => handleBuyPackage(plan.name)}
+                variant={plan.isPopular ? "default" : "outline"}
+                className="group hover:bg-primary hover:text-primary-foreground hover:ring-primary relative w-full transform-gpu cursor-pointer gap-2 overflow-hidden text-lg font-semibold tracking-tighter ring-offset-current transition-all duration-300 ease-out hover:ring-2 hover:ring-offset-1"
               >
-                {plan.buttonText}
-              </Link>
-              <p className="mt-6 text-xs leading-5 text-muted-foreground">
+                {loading ? (
+                  <>
+                    <Loader2 className="animate-spin" /> Loading...
+                  </>
+                ) : (
+                  <>{plan.buttonText}</>
+                )}
+              </Button>
+              <p className="text-muted-foreground mt-6 text-xs leading-5">
                 {plan.description}
               </p>
             </div>

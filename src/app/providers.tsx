@@ -30,7 +30,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
               }}
             >
               <Particles
-                className="fixed inset-0 -z-10 animate-fade-in"
+                className="animate-fade-in fixed inset-0 -z-10"
                 quantity={100}
               />
 

@@ -16,7 +16,6 @@ import { Input } from "@/components/ui/input";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -26,10 +25,14 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { Textarea } from "@/components/ui/textarea";
 
 const formSchema = z.object({
-  username: z.string().min(2, {
-    message: "Username must be at least 2 characters.",
+  title: z.string().min(2, {
+    message: "title must be at least 2 characters.",
+  }),
+  description: z.string().min(2, {
+    message: "Description must not be null!",
   }),
 });
 
@@ -38,7 +41,8 @@ export const Schedule: React.FC = () => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      username: "",
+      title: "",
+      description: "",
     },
   });
 
@@ -56,14 +60,14 @@ export const Schedule: React.FC = () => {
     >
       <BlurIn
         word="Launch Schedule"
-        className="mb-10 text-2xl font-black uppercase text-zinc-50 lg:mb-14 lg:text-4xl"
+        className="mb-10 text-2xl font-black text-zinc-50 uppercase lg:mb-14 lg:text-4xl"
       />
 
       <div className="space-y-6">
         <div className="flex items-center justify-end">
           <Dialog>
             <DialogTrigger asChild>
-              <button className="ml-auto inline-flex h-12 animate-shimmer items-center justify-center rounded-md border border-slate-800 bg-[linear-gradient(110deg,#000103,45%,#1e2631,55%,#000103)] bg-[length:200%_100%] px-6 font-medium text-zinc-500 transition-colors hover:text-slate-400 focus:outline-hidden focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 focus:ring-offset-slate-50">
+              <button className="animate-shimmer ml-auto inline-flex h-12 cursor-pointer items-center justify-center rounded-md border border-slate-800 bg-[linear-gradient(110deg,#000103,45%,#1e2631,55%,#000103)] bg-[length:200%_100%] px-6 font-medium text-zinc-500 transition-colors hover:text-slate-400 focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 focus:ring-offset-slate-50 focus:outline-hidden">
                 Action Click
               </button>
             </DialogTrigger>
@@ -83,20 +87,34 @@ export const Schedule: React.FC = () => {
                 >
                   <FormField
                     control={form.control}
-                    name="username"
+                    name="title"
                     render={({ field }) => (
                       <FormItem className="col-span-4">
-                        <FormLabel>Username</FormLabel>
+                        <FormLabel>Title</FormLabel>
                         <FormControl>
                           <Input
-                            placeholder="shadcn"
+                            placeholder="proposal title..."
                             autoComplete="off"
                             {...field}
                           />
                         </FormControl>
-                        <FormDescription>
-                          This is your public display name.
-                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="description"
+                    render={({ field }) => (
+                      <FormItem className="col-span-4">
+                        <FormLabel>Description</FormLabel>
+                        <FormControl>
+                          <Textarea
+                            placeholder="my proposal...."
+                            autoComplete="off"
+                            {...field}
+                          />
+                        </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}

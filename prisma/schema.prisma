@@ -14,23 +14,12 @@ datasource db {
 }
 
 model Users {
-  id              String         @id @default(cuid())
-  wallet_address  String         @unique
-  subscription_id String?
-  subscription    Subscriptions? @relation(fields: [subscription_id], references: [id])
-  UserVotes       UserVotes[]
+  id             String      @id @default(cuid())
+  wallet_address String      @unique
+  subscription   Int?
+  UserVotes      UserVotes[]
 
   @@map("users")
-}
-
-model Subscriptions {
-  id          String  @id @default(cuid())
-  title       String
-  description String
-  price       Decimal
-  Users       Users[]
-
-  @@map("subscription")
 }
 
 model Proposals {
@@ -50,6 +39,7 @@ model UserVotes {
   user        Users     @relation(fields: [user_id], references: [id], onDelete: Cascade)
   proposal_id String
   proposal    Proposals @relation(fields: [proposal_id], references: [id], onDelete: Cascade)
+  votes       Boolean
 
   @@map("user_votes")
 }
