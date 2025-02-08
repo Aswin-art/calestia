@@ -5,6 +5,7 @@ import PricingPlan from "./_components/pricing-plan";
 const PageFeature = () => {
   return (
     <Fragment>
+      
       <GaleryAi />
       <PricingPlan />
     </Fragment>

@@ -1,9 +1,9 @@
 "use client";
-import { Navigation } from "@/components/layouts/navbars/nav";
-import ReactLenis from "lenis/react";
 import { Fragment, useEffect } from "react";
 import { useAccount } from "wagmi";
 import { check } from "../../../actions/users";
+import ReactLenis from "lenis/react";
+import NavigationPublic from "./_components/navigation-public";
 
 export default function PublicLayout({
   children,
@@ -31,7 +31,8 @@ export default function PublicLayout({
           lerp: 0.05,
         }}
       >
-        <Navigation />
+        <NavigationPublic />
+
         {children}
       </ReactLenis>
     </Fragment>

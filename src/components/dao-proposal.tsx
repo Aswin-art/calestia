@@ -8,13 +8,14 @@ import { useAccount, useReadContract, useWriteContract } from "wagmi";
 import config from "@/lib/config";
 import { GetProposalQuery } from "../../queries/queryProposal";
 
-export default function AnimatedItem({
+export default function DaoProposal({
   userWalletAddress,
   proposalId,
-  title,
-  description,
   totalUpVote,
   totalDownVote,
+  title,
+  description,
+  token,
 }: {
   userWalletAddress: string;
   proposalId: string;
@@ -22,6 +23,7 @@ export default function AnimatedItem({
   description: string;
   totalUpVote: number;
   totalDownVote: number;
+  token: string;
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
@@ -91,14 +93,13 @@ export default function AnimatedItem({
       animate={{ y: 0, opacity: 1 }}
       viewport={{ once: true }}
       transition={{ ease: "easeInOut", duration: 0.75 }}
-      className="mb-6"
     >
       <motion.div
         ref={ref}
         onMouseMove={handleMouseMove}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
-        className="group relative w-full overflow-hidden rounded-2xl border border-zinc-600 duration-700 hover:border-zinc-400/50 hover:bg-zinc-800/10"
+        className="group relative h-52 w-full overflow-hidden rounded-2xl border border-zinc-600 duration-700 hover:border-zinc-400/50 hover:bg-zinc-800/10"
       >
         <div
           className="absolute inset-0 z-0 transition-opacity duration-300 ease-in-out"
@@ -151,6 +152,34 @@ export default function AnimatedItem({
               </Button>
             </div>
           </div>
+        </article>
+        <article className="h-full p-4">
+          {/* <div className="flex items-center justify-between gap-2">
+            <span className="drop-shadow-orange text-xs text-zinc-200 duration-1000 group-hover:border-zinc-200 group-hover:text-white">
+              <span>SOON</span>
+            </span>
+            <span className="flex items-center gap-1 text-xs text-zinc-500">
+              <Eye className="h-4 w-4" /> 12312132
+            </span>
+          </div> */}
+          <h2 className="font-display z-20 truncate text-xl font-semibold text-zinc-200 duration-1000 group-hover:text-white">
+            {title}
+          </h2>
+
+          <div className="flex items-center gap-x-2">
+            <div className="size-2 rounded-full bg-green-600"></div>
+            <p className="truncate text-sm">{token}</p>
+          </div>
+
+          <p className="mt-4 line-clamp-6 text-sm text-zinc-400 group-hover:text-zinc-200">
+            {description} Lorem ipsum dolor sit amet, consectetur adipisicing
+            elit. Quasi ea optio sint alias aut illo dolorum at quae natus
+            perferendis iure fugiat itaque laborum voluptas corrupti, sequi quo
+            voluptates magnam! Lorem ipsum dolor sit amet consectetur
+            adipisicing elit. Neque fugiat obcaecati doloribus, officiis dicta
+            dolor numquam ab voluptates adipisci consequatur quisquam ducimus
+            debitis expedita officia sapiente veniam earum natus? Repellat.
+          </p>
         </article>
       </motion.div>
     </motion.div>

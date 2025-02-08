@@ -1,4 +1,4 @@
-@import 'tailwindcss';
+@import "tailwindcss";
 
 @plugin 'tailwindcss-animate';
 
@@ -55,6 +55,22 @@
   --radius-lg: var(--radius);
   --radius-md: calc(var(--radius) - 2px);
   --radius-sm: calc(var(--radius) - 4px);
+
+  @keyframes shine {
+    '0%': {
+      backgroundposition: "200% 0";
+    }
+    '25%': {
+      backgroundposition: "-200% 0";
+    }
+    '100%': {
+      backgroundposition: "-200% 0";
+    }
+  }
+
+  /* @animation {
+    shine: "shine 3s ease-out infinite";
+  } */
 
   @keyframes shimmer {
     from {
@@ -223,7 +239,7 @@
     }
 
     ::-webkit-scrollbar-thumb {
-      @apply rounded-full border-[1px] border-solid border-transparent bg-border bg-clip-padding;
+      @apply bg-border rounded-full border-[1px] border-solid border-transparent bg-clip-padding;
     }
   }
 }
