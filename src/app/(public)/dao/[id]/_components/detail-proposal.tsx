@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Box, House, PanelsTopLeft } from "lucide-react";
+import { House, PanelsTopLeft } from "lucide-react";
 import Image from "next/image";
 import { DataTableVotes } from "./tables/data-table";
 import { columnsVotes } from "./tables/columns";

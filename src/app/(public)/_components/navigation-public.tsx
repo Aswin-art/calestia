@@ -4,26 +4,24 @@ import Link from "next/link";
 
 import { useState } from "react";
 import { routeNav } from "@/assets/data";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { Instagram, Wallet, FileText, Menu, X } from "lucide-react";
 import {
   useMotionValueEvent,
   AnimatePresence,
   motion,
   useScroll,
 } from "motion/react";
+import IconDiscord from "@/assets/icons/discord";
+import IconTwitter from "@/assets/icons/twitter";
+import IconTelegram from "@/assets/icons/telegram";
 
-const navLinks = [
-  { title: "What we do", href: "/" },
-  { title: "How it works", href: "/" },
-  { title: "Case studies", href: "/" },
-  { title: "About", href: "/" },
-  { title: "Contact", href: "/" },
-];
 const NavigationPublic: React.FC = () => {
   const { scrollY } = useScroll();
   const [isIntersecting, setIntersecting] = useState(true);
-  const router = usePathname();
-  const nav = routeNav.filter(({ href }) => href !== router);
+  const pathName = usePathname();
+  const router = useRouter();
+  const nav = routeNav.filter(({ href }) => href !== pathName);
 
   useMotionValueEvent(scrollY, "change", (latest) => {
     setIntersecting(latest < 50);
@@ -32,6 +30,12 @@ const NavigationPublic: React.FC = () => {
   const toggleMenu = () => {
     setOpen((prevOpen) => !prevOpen);
   };
+
+  const closeToggleMenu = (route: string) => {
+    router.push(route);
+    setOpen(false);
+  };
+
   const menuVars = {
     initial: {
       scaleY: 0,
@@ -78,24 +82,29 @@ const NavigationPublic: React.FC = () => {
     >
       <nav className="flex items-center justify-between px-4 py-8 lg:py-6">
         <div className="flex items-center gap-[1ch]">
-          <div className="h-5 w-5 rounded-full bg-yellow-400" />
-          <span className="text-sm font-semibold tracking-widest">
-            PORTFOLIO
-          </span>
+          <Link href={"/"} className="size-5 rounded-full bg-yellow-400" />
         </div>
-        <div className="text-md hidden gap-12 text-zinc-400 lg:flex">
-          <Link href="#" className="font-medium text-black">
-            Home
+        <div className="text-md text-zinc-40gap-x-0 flex gap-x-3 sm:gap-x-5">
+          <IconDiscord className="size-5" />
+          <Link href={"/projects"}>
+            <IconTwitter className="size-5 fill-white" />
           </Link>
-          <Link href={"/projects"}>Project</Link>
-          Contact
+          <Link href="#">
+            <Instagram className="size-5 stroke-white" />
+          </Link>
+
+          <Link href="#">
+            <IconTelegram className="size-5" />
+          </Link>
+
+          <Link href={""}>
+            <FileText className="size-5 stroke-white" />
+          </Link>
+
+          <Wallet className="size-5 stroke-white" />
         </div>
-        <div
-          className="text-md cursor-pointer text-black lg:hidden"
-          onClick={toggleMenu}
-        >
-          Menu
-        </div>
+
+        <Menu className="size-6 cursor-pointer" onClick={toggleMenu} />
       </nav>
       <AnimatePresence>
         {open && (
@@ -104,34 +113,30 @@ const NavigationPublic: React.FC = () => {
             initial="initial"
             animate="animate"
             exit="exit"
-            className="fixed top-0 left-0 z-20 h-screen w-full origin-top bg-neutral-800 backdrop-blur-[30px]"
+            className="fixed top-0 left-0 z-20 h-screen w-full origin-top overflow-hidden bg-neutral-950 backdrop-blur-md"
           >
-            <div className="flex h-full flex-col">
-              <div className="flex justify-between">
-                <h1 className="text-lg text-white">Portfolio</h1>
-                <p
-                  className="text-md cursor-pointer text-white"
-                  onClick={toggleMenu}
-                >
-                  Close
-                </p>
+            <div className="flex h-full flex-col text-white">
+              <div className="flex justify-between p-8">
+                <Link href={"/"} className="text-lg text-white">
+                  Logo
+                </Link>
+
+                <X className="size-6 cursor-pointer" onClick={toggleMenu} />
               </div>
               <motion.div
                 variants={containerVars}
                 initial="initial"
                 animate="open"
                 exit="initial"
-                className="font-lora flex h-full flex-col items-center justify-center gap-4"
+                className="flex w-full flex-col items-start space-y-2"
               >
-                {navLinks.map((link, index) => {
+                {routeNav.map((link, index) => {
                   return (
-                    <div className="overflow-hidden" key={index}>
-                      <MobileNavLink
-                        key={index}
-                        title={link.title}
-                        href={link.href}
-                      />
-                    </div>
+                    <MobileNavLink
+                      key={index}
+                      title={link.name}
+                      onClick={() => closeToggleMenu(link.href)}
+                    />
                   );
                 })}
               </motion.div>
@@ -161,13 +166,21 @@ const mobileLinkVars = {
     },
   },
 };
-const MobileNavLink = ({ title, href }: { title: string; href: string }) => {
+const MobileNavLink = ({
+  title,
+  onClick, // Perbaikan: Sesuaikan dengan tipe yang didefinisikan
+}: {
+  title: string;
+  onClick: React.MouseEventHandler<HTMLButtonElement>; // Tipe tetap benar
+}) => {
   return (
-    <motion.div
+    <motion.button
+      onClick={onClick} // Pastikan konsistensi dengan properti yang diterima
+      type="button"
       variants={mobileLinkVars}
-      className="text-5xl text-black uppercase"
+      className="w-full cursor-pointer px-8 py-2 text-left font-semibold text-white hover:bg-white/10"
     >
-      <Link href={href}>{title}</Link>
-    </motion.div>
+      {title}
+    </motion.button>
   );
 };

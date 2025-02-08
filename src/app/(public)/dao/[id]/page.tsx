@@ -17,7 +17,7 @@ export default function PageDetailDao() {
         <SheetTrigger asChild>
           <Button
             type="submit"
-            className="animate-shimmer fixed right-5 bottom-4 inline-flex size-14 cursor-pointer items-center justify-center rounded-full border-2 border-slate-800 bg-[linear-gradient(110deg,#000103,45%,#1e2631,55%,#000103)] bg-[length:200%_100%] font-medium text-zinc-500 transition-colors hover:text-slate-400 focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 focus:ring-offset-slate-50 focus:outline-hidden md:hidden"
+            className="animate-shimmer fixed right-5 bottom-4 inline-flex size-14 cursor-pointer items-center justify-center rounded-full border border-slate-800 bg-[linear-gradient(110deg,#000103,45%,#1e2631,55%,#000103)] bg-[length:200%_100%] font-medium text-zinc-500 transition-colors hover:text-slate-400 focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 focus:ring-offset-slate-50 focus:outline-hidden md:hidden"
           >
             <ChartPie className="stroke-green-200" size="25px" />
           </Button>
