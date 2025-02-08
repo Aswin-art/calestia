@@ -4,3 +4,5 @@ export type TAnimateParallaxImg = ImageProps & {
   start: number;
   end: number;
 };
+
+

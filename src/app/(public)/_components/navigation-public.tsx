@@ -4,7 +4,7 @@ import Link from "next/link";
 
 import { useState } from "react";
 import { routeNav } from "@/assets/data";
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { Instagram, Wallet, FileText, Menu, X } from "lucide-react";
 import {
   useMotionValueEvent,
@@ -19,9 +19,8 @@ import IconTelegram from "@/assets/icons/telegram";
 const NavigationPublic: React.FC = () => {
   const { scrollY } = useScroll();
   const [isIntersecting, setIntersecting] = useState(true);
-  const pathName = usePathname();
+
   const router = useRouter();
-  const nav = routeNav.filter(({ href }) => href !== pathName);
 
   useMotionValueEvent(scrollY, "change", (latest) => {
     setIntersecting(latest < 50);
