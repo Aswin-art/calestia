@@ -4,6 +4,7 @@ import "@/styles/globals.css";
 import NextTopLoader from "nextjs-toploader";
 import { ThemeProvider } from "@/components/theme-provider";
 import Particles from "@/components/particles";
+import { Toaster } from "@/components/ui/sonner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -46,6 +47,8 @@ export default function RootLayout({
           />
 
           {children}
+
+          <Toaster />
         </ThemeProvider>
       </body>
     </html>
