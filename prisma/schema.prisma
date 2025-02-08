@@ -19,38 +19,53 @@ model Users {
   subscription   Int?
   UserVotes      UserVotes[]
   Sessions       Sessions[]
+  Proposals      Proposals[]
+  created_at     DateTime    @default(now())
+  updated_at     DateTime    @updatedAt
 
   @@map("users")
 }
 
 model Proposals {
-  id          String      @id @default(cuid())
-  title       String
-  description String
-  upvote      Int
-  downvote    Int
-  UserVotes   UserVotes[]
+  id           String      @id @default(cuid())
+  user_id      String
+  user         Users       @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  title        String
+  description  String
+  upvote       BigInt      @default(0)
+  downvote     BigInt      @default(0)
+  is_emergency Boolean     @default(false)
+  UserVotes    UserVotes[]
+  created_at   DateTime    @default(now())
+  updated_at   DateTime    @updatedAt
 
   @@map("proposals")
 }
 
 model UserVotes {
-  id          String    @id @default(cuid())
-  user_id     String
-  user        Users     @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  proposal_id String
-  proposal    Proposals @relation(fields: [proposal_id], references: [id], onDelete: Cascade)
-  votes       Boolean
+  id           String    @id @default(cuid())
+  user_id      String
+  user         Users     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  proposal_id  String
+  proposal     Proposals @relation(fields: [proposal_id], references: [id], onDelete: Cascade)
+  votes        Boolean
+  votes_weight Int
+  created_at   DateTime  @default(now())
+  updated_at   DateTime  @updatedAt
 
   @@map("user_votes")
 }
 
 model Sessions {
-  id      String  @id @default(cuid())
-  user_id String
-  user    Users   @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  title   String
-  Chats   Chats[]
+  id         String   @id @default(cuid())
+  user_id    String
+  user       Users    @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  title      String
+  Chats      Chats[]
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@map("sessions")
 }
 
 model Chats {
@@ -59,4 +74,8 @@ model Chats {
   session    Sessions @relation(fields: [session_id], references: [id], onDelete: Cascade)
   question   String
   answer     String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@map("chats")
 }

@@ -92,7 +92,7 @@ export function Pricing({
 
   const handleBuyPackage = async (name: string) => {
     setLoading(true);
-    if (!address) return;
+    if (!address) return setLoading(false);
     let level;
     let price;
 
