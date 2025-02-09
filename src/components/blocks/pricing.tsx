@@ -10,9 +10,20 @@ import { useState, useRef } from "react";
 import confetti from "canvas-confetti";
 import NumberFlow from "@number-flow/react";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
-import { useAccount, useWriteContract } from "wagmi";
+import { useAccount, useReadContract, useWriteContract } from "wagmi";
 import config from "../../lib/config";
-import { addSubscription } from "../../../actions/users";
+import { toast } from "sonner";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "../ui/alert-dialog";
+import { publicClient } from "@/lib/wagmi";
 
 interface PricingPlan {
   name: string;
@@ -42,9 +53,17 @@ export function Pricing({
   const switchRef = useRef<HTMLButtonElement>(null);
 
   const [loading, setLoading] = useState(false);
+  const [openDialog, setOpenDialog] = useState(false);
+
+  const { address } = useAccount();
 
   const { writeContract } = useWriteContract();
-  const { address } = useAccount();
+  const { data } = useReadContract({
+    abi: config.abi,
+    address: config.address as `0x${string}`,
+    functionName: "isSubscriptionActiveForUser",
+    args: [address],
+  });
 
   const handleToggle = (checked: boolean) => {
     setIsMonthly(!checked);
@@ -75,24 +94,30 @@ export function Pricing({
     }
   };
 
-  const handleAddSubscriptionUser = async (level: number) => {
-    if (!address || !level) return;
-    const req = await addSubscription(level, address);
-
-    if (req) {
-      setLoading(false);
-      console.log("Success");
-      return true;
-    } else {
-      console.log("Failed");
-      console.log(req);
-      return false;
+  const confirmPurchase = (name: string) => {
+    if (data) {
+      return setOpenDialog(true);
     }
+    handleBuyPackage(name);
   };
 
   const handleBuyPackage = async (name: string) => {
     setLoading(true);
-    if (!address) return setLoading(false);
+    if (!address) {
+      toast("Connect Your Wallet!", {
+        description:
+          "Please connect with your wallet before purchase a subscription.",
+      });
+      return setLoading(false);
+    }
+
+    if (name === "") {
+      toast("Wrong Subscription!", {
+        description: "Please pick subscription type before purchase.",
+      });
+      return setLoading(false);
+    }
+
     let level;
     let price;
 
@@ -127,7 +152,32 @@ export function Pricing({
           value: price,
         },
         {
-          onSuccess: () => handleAddSubscriptionUser(level),
+          onSuccess: async (hash) => {
+            try {
+              const result = await publicClient.waitForTransactionReceipt({
+                hash,
+                confirmations: 1,
+              });
+
+              if (result.status === "success") {
+                setLoading(false);
+                toast("Success!", {
+                  description: "Subscription success to buy.",
+                });
+              } else {
+                setLoading(false);
+                toast("Failed!", {
+                  description: "Subscription failed to buy.",
+                });
+              }
+            } catch (err) {
+              console.log(err);
+              setLoading(false);
+              toast("Failed!", {
+                description: "Transaction confirmation failed.",
+              });
+            }
+          },
           onError: (err) => {
             console.log(err);
             setLoading(false);
@@ -169,113 +219,149 @@ export function Pricing({
 
       <div className="sm:2 grid grid-cols-1 gap-4 px-4 sm:px-0 md:grid-cols-3">
         {plans.map((plan, index) => (
-          <motion.div
-            key={index}
-            initial={{ y: 50, opacity: 1 }}
-            whileInView={
-              isDesktop
-                ? {
-                    y: plan.isPopular ? -20 : 0,
-                    opacity: 1,
-                    x: index === 2 ? -30 : index === 0 ? 30 : 0,
-                    scale: index === 0 || index === 2 ? 0.94 : 1.0,
-                  }
-                : {}
-            }
-            viewport={{ once: true }}
-            transition={{
-              duration: 1.6,
-              type: "spring",
-              stiffness: 100,
-              damping: 30,
-              delay: 0.4,
-              opacity: { duration: 0.5 },
-            }}
-            className={cn(
-              `bg-background relative rounded-2xl border-[1px] p-6 text-center lg:flex lg:flex-col lg:justify-center`,
-              plan.isPopular ? "border-primary border-2" : "border-border",
-              "flex flex-col",
-              !plan.isPopular && "mt-5",
-              index === 0 || index === 2
-                ? "z-0 translate-x-0 translate-y-0 -translate-z-[50px] rotate-y-[10deg] transform"
-                : "z-10",
-              index === 0 && "origin-right",
-              index === 2 && "origin-left",
-            )}
-          >
-            {plan.isPopular && (
-              <div className="bg-primary absolute top-0 right-0 flex items-center rounded-tr-xl rounded-bl-xl px-2 py-0.5">
-                <Star className="text-primary-foreground h-4 w-4 fill-current" />
-                <span className="text-primary-foreground ml-1 font-sans font-semibold">
-                  Popular
-                </span>
-              </div>
-            )}
-            <div className="flex flex-1 flex-col">
-              <p className="text-muted-foreground text-base font-semibold">
-                {plan.name}
-              </p>
-              <div className="mt-6 flex items-center justify-center gap-x-2">
-                <span className="text-foreground text-5xl font-bold tracking-tight">
-                  <NumberFlow
-                    value={
-                      isMonthly ? Number(plan.price) : Number(plan.yearlyPrice)
+          <div className="relative" key={index}>
+            <motion.div
+              initial={{ y: 50, opacity: 1 }}
+              whileInView={
+                isDesktop
+                  ? {
+                      y: plan.isPopular ? -20 : 0,
+                      opacity: 1,
+                      x: index === 2 ? -30 : index === 0 ? 30 : 0,
+                      scale: index === 0 || index === 2 ? 0.94 : 1.0,
                     }
-                    format={{
-                      style: "currency",
-                      currency: "USD",
-                      minimumFractionDigits: 0,
-                      maximumFractionDigits: 0,
-                    }}
-                    transformTiming={{
-                      duration: 500,
-                      easing: "ease-out",
-                    }}
-                    willChange
-                    className="font-variant-numeric: tabular-nums"
-                  />
-                </span>
-                {plan.period !== "Next 3 months" && (
-                  <span className="text-muted-foreground text-sm leading-6 font-semibold tracking-wide">
-                    / {plan.period}
+                  : {}
+              }
+              viewport={{ once: true }}
+              transition={{
+                duration: 1.6,
+                type: "spring",
+                stiffness: 100,
+                damping: 30,
+                delay: 0.4,
+                opacity: { duration: 0.5 },
+              }}
+              className={cn(
+                `bg-background relative h-full rounded-2xl border-[1px] p-6 text-center lg:flex lg:flex-col lg:justify-center`, // Tambahkan h-full
+                plan.isPopular ? "border-primary border-2" : "border-border",
+                "flex flex-col",
+                !plan.isPopular && "mt-5",
+                index === 0 || index === 2
+                  ? "z-0 translate-x-0 translate-y-0 -translate-z-[50px] rotate-y-[10deg] transform"
+                  : "z-10",
+                index === 0 && "origin-right",
+                index === 2 && "origin-left",
+              )}
+            >
+              {plan.isPopular && (
+                <div className="bg-primary absolute top-0 right-0 flex items-center rounded-tr-xl rounded-bl-xl px-2 py-0.5">
+                  <Star className="text-primary-foreground h-4 w-4 fill-current" />
+                  <span className="text-primary-foreground ml-1 font-sans font-semibold">
+                    Popular
                   </span>
-                )}
+                </div>
+              )}
+              <div className="flex flex-1 flex-col">
+                <p className="text-muted-foreground text-base font-semibold">
+                  {plan.name}
+                </p>
+                <div className="mt-6 flex items-center justify-center gap-x-2">
+                  <span className="text-foreground text-5xl font-bold tracking-tight">
+                    <NumberFlow
+                      value={
+                        isMonthly
+                          ? Number(plan.price)
+                          : Number(plan.yearlyPrice)
+                      }
+                      format={{
+                        style: "currency",
+                        currency: "USD",
+                        minimumFractionDigits: 0,
+                        maximumFractionDigits: 0,
+                      }}
+                      transformTiming={{
+                        duration: 500,
+                        easing: "ease-out",
+                      }}
+                      willChange
+                      className="font-variant-numeric: tabular-nums"
+                    />
+                  </span>
+                  {plan.period !== "Next 3 months" && (
+                    <span className="text-muted-foreground text-sm leading-6 font-semibold tracking-wide">
+                      / {plan.period}
+                    </span>
+                  )}
+                </div>
+
+                <p className="text-muted-foreground text-xs leading-5">
+                  {isMonthly ? "billed monthly" : "billed annually"}
+                </p>
+
+                <ul className="mt-5 flex flex-1 flex-col gap-2">
+                  {plan.features.map((feature, idx) => (
+                    <li key={idx} className="flex items-start gap-2">
+                      <Check className="text-primary mt-1 h-4 w-4 shrink-0" />
+                      <span className="text-left">{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+
+                <hr className="my-4 w-full" />
+
+                <Button
+                  disabled={loading}
+                  onClick={() => confirmPurchase(plan.name)}
+                  variant={plan.isPopular ? "default" : "outline"}
+                  className="group hover:bg-primary hover:text-primary-foreground hover:ring-primary relative w-full transform-gpu cursor-pointer gap-2 overflow-hidden text-lg font-semibold tracking-tighter ring-offset-current transition-all duration-300 ease-out hover:ring-2 hover:ring-offset-1"
+                >
+                  {loading ? (
+                    <>
+                      <Loader2 className="animate-spin" /> Loading...
+                    </>
+                  ) : (
+                    <>{plan.buttonText}</>
+                  )}
+                </Button>
+                <p className="text-muted-foreground mt-6 text-xs leading-5">
+                  {plan.description}
+                </p>
               </div>
+            </motion.div>
 
-              <p className="text-muted-foreground text-xs leading-5">
-                {isMonthly ? "billed monthly" : "billed annually"}
-              </p>
-
-              <ul className="mt-5 flex flex-col gap-2">
-                {plan.features.map((feature, idx) => (
-                  <li key={idx} className="flex items-start gap-2">
-                    <Check className="text-primary mt-1 h-4 w-4 shrink-0" />
-                    <span className="text-left">{feature}</span>
-                  </li>
-                ))}
-              </ul>
-
-              <hr className="my-4 w-full" />
-
-              <Button
-                disabled={loading}
-                onClick={() => handleBuyPackage(plan.name)}
-                variant={plan.isPopular ? "default" : "outline"}
-                className="group hover:bg-primary hover:text-primary-foreground hover:ring-primary relative w-full transform-gpu cursor-pointer gap-2 overflow-hidden text-lg font-semibold tracking-tighter ring-offset-current transition-all duration-300 ease-out hover:ring-2 hover:ring-offset-1"
-              >
-                {loading ? (
-                  <>
-                    <Loader2 className="animate-spin" /> Loading...
-                  </>
-                ) : (
-                  <>{plan.buttonText}</>
-                )}
-              </Button>
-              <p className="text-muted-foreground mt-6 text-xs leading-5">
-                {plan.description}
-              </p>
-            </div>
-          </motion.div>
+            <AlertDialog open={openDialog}>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    This action cannot be undone. This will permanently delete
+                    your current subscription and remove your subscription data
+                    from our servers.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel
+                    className="cursor-pointer"
+                    onClick={() => {
+                      setLoading(false);
+                      setOpenDialog(false);
+                    }}
+                  >
+                    Cancel
+                  </AlertDialogCancel>
+                  <AlertDialogAction
+                    className="cursor-pointer"
+                    onClick={() => {
+                      setOpenDialog(false);
+                      handleBuyPackage(plan.name);
+                    }}
+                  >
+                    Continue
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </div>
         ))}
       </div>
     </div>

@@ -1,7 +1,7 @@
 import { getDefaultConfig } from "@rainbow-me/rainbowkit";
 import { holesky } from "wagmi/chains";
 import { createPublicClient, http } from "viem";
-import { mainnet } from "viem/chains";
+import { holesky as holeskyViem } from "viem/chains";
 
 export const config = getDefaultConfig({
   appName: "Arcalis AI",
@@ -14,6 +14,6 @@ export const config = getDefaultConfig({
 });
 
 export const publicClient = createPublicClient({
-  chain: mainnet,
+  chain: holeskyViem,
   transport: http(),
 });
