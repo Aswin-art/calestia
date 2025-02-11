@@ -1,7 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+"use client";
 import { Fragment } from "react";
 import { DetailProposal } from "@/app/(public)/dao/[id]/_components/detail-proposal";
 import { Button } from "@/components/ui/button";
-import { ChartPie } from "lucide-react";
+import { ChartPie, Loader2 } from "lucide-react";
 import {
   Sheet,
   SheetContent,
@@ -9,9 +11,33 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import DetailVote from "@/app/(public)/dao/[id]/_components/detail-vote";
+import { useParams } from "next/navigation";
+import { useReadContract } from "wagmi";
+import config from "@/lib/config";
 
 export default function PageDetailDao() {
-  return (
+  const params = useParams();
+  const { data, isLoading, refetch } = useReadContract({
+    abi: config.abi,
+    address: config.address as `0x${string}`,
+    functionName: "getProposalByDbId",
+    args: [params.id],
+  });
+
+  const result: any = data;
+
+  const { data: votesData, refetch: refetchVotesData } = useReadContract({
+    abi: config.abi,
+    address: config.address as `0x${string}`,
+    functionName: "getVoterDetails",
+    args: [result?.id],
+  });
+
+  return isLoading ? (
+    <div className="flex h-[300px] items-center justify-center">
+      <Loader2 className="animate-spin" />
+    </div>
+  ) : (
     <Fragment>
       <Sheet>
         <SheetTrigger asChild>
@@ -25,15 +51,27 @@ export default function PageDetailDao() {
         <SheetContent className="w-[350px] sm:w-[700px]">
           <SheetTitle className="hidden">Are you absolutely sure?</SheetTitle>
 
-          <DetailVote show={false} />
+          <DetailVote
+            show={false}
+            id={result.id}
+            result={result}
+            refetch={refetch}
+            refetchVotes={refetchVotesData}
+          />
         </SheetContent>
       </Sheet>
 
       <section className="py-28">
         <div className="container mx-auto">
           <div className="block w-full grid-cols-12 gap-x-10 sm:grid">
-            <DetailProposal />
-            <DetailVote show />
+            <DetailProposal result={result} votesData={votesData} />
+            <DetailVote
+              show
+              id={result.id}
+              result={result}
+              refetch={refetch}
+              refetchVotes={refetchVotesData}
+            />
           </div>
         </div>
       </section>

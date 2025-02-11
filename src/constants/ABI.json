@@ -93,37 +93,6 @@
     "anonymous": false,
     "inputs": [
       {
-        "indexed": true,
-        "internalType": "uint256",
-        "name": "proposalId",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "string",
-        "name": "title",
-        "type": "string"
-      },
-      {
-        "indexed": false,
-        "internalType": "string",
-        "name": "description",
-        "type": "string"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "durationHours",
-        "type": "uint256"
-      }
-    ],
-    "name": "EmergencyProposalCreated",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
         "indexed": false,
         "internalType": "address",
         "name": "sender",
@@ -346,6 +315,13 @@
   },
   {
     "inputs": [],
+    "name": "contractShareBalances",
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "contractSharePercentage",
     "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
     "stateMutability": "view",
@@ -454,6 +430,26 @@
     ],
     "name": "getVoteWeight",
     "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "uint256", "name": "proposalId", "type": "uint256" }
+    ],
+    "name": "getVoterDetails",
+    "outputs": [
+      {
+        "components": [
+          { "internalType": "address", "name": "voter", "type": "address" },
+          { "internalType": "bool", "name": "support", "type": "bool" },
+          { "internalType": "uint256", "name": "weight", "type": "uint256" }
+        ],
+        "internalType": "struct Arcalis.VoteDetail[]",
+        "name": "",
+        "type": "tuple[]"
+      }
+    ],
     "stateMutability": "view",
     "type": "function"
   },

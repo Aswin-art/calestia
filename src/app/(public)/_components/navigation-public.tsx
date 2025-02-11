@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { routeNav } from "@/assets/data";
 import { useRouter } from "next/navigation";
-import { Instagram, Wallet, FileText, Menu, X } from "lucide-react";
+import { Instagram, Menu, X } from "lucide-react";
 import {
   useMotionValueEvent,
   AnimatePresence,
@@ -95,12 +95,6 @@ const NavigationPublic: React.FC = () => {
           <Link href="#">
             <IconTelegram className="size-5" />
           </Link>
-
-          <Link href={""}>
-            <FileText className="size-5 stroke-white" />
-          </Link>
-
-          <Wallet className="size-5 stroke-white" />
         </div>
 
         <Menu className="size-6 cursor-pointer" onClick={toggleMenu} />
@@ -117,7 +111,7 @@ const NavigationPublic: React.FC = () => {
             <div className="flex h-full flex-col text-white">
               <div className="flex justify-between p-8">
                 <Link href={"/"} className="text-lg text-white">
-                  Logo
+                  Arcalis
                 </Link>
 
                 <X className="size-6 cursor-pointer" onClick={toggleMenu} />

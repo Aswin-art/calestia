@@ -1,5 +1,4 @@
-"use client";
-
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Pie, PieChart } from "recharts";
 
 import {
@@ -10,16 +9,13 @@ import {
 } from "@/components/ui/chart";
 import React from "react";
 const chartData = [
-  { browser: "for", visitors: 16, fill: "var(--color-chrome)" },
-  { browser: "againts", visitors: 83, fill: "var(--color-safari)" },
-  // { browser: "firefox", visitors: 187, fill: "var(--color-firefox)" },
-  // { browser: "edge", visitors: 173, fill: "var(--color-edge)" },
-  // { browser: "other", visitors: 90, fill: "var(--color-other)" },
+  { browser: "for", visitors: 0, fill: "var(--color-chrome)" },
+  { browser: "againts", visitors: 0, fill: "var(--color-other)" },
 ];
 
 const chartConfig = {
   visitors: {
-    label: "Visitors",
+    label: "Voters",
   },
   chrome: {
     label: "Chrome",
@@ -43,8 +39,15 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-export function ChartVote() {
-  return (
+export function ChartVote({ result }: { result: any }) {
+  chartData[0].visitors = Number(result?.votesFor);
+  chartData[1].visitors = Number(result?.votesAgainst);
+
+  return result?.votesFor == 0 && result?.votesAgainst == 0 ? (
+    <p className="text-muted-foreground mt-5 h-[100px]">
+      There is still no voters, chart result will be updating in here.
+    </p>
+  ) : (
     <ChartContainer
       config={chartConfig}
       className="[&_.recharts-pie-label-text]:fill-foreground mx-auto aspect-square max-h-[250px] pb-0"

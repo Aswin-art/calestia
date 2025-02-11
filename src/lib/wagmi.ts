@@ -4,7 +4,7 @@ import { createPublicClient, http } from "viem";
 import { holesky as holeskyViem } from "viem/chains";
 
 export const config = getDefaultConfig({
-  appName: "Arcalis AI",
+  appName: "Arcalis",
   projectId: "YOUR_PROJECT_ID",
   chains: [
     holesky,
