@@ -33,7 +33,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} bg-zinc-950 antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} scroll-smooth bg-zinc-950 antialiased`}
       >
         <NextTopLoader />
         <Providers>{children}</Providers>

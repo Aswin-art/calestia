@@ -60,7 +60,7 @@ export default function DaoProposal({
             <p className="truncate text-sm">{executed ? "Ended" : "Active"}</p>
           </div>
 
-          <p className="line-clamp-6 text-sm text-zinc-400 group-hover:text-zinc-200">
+          <p className="line-clamp-6 text-sm text-zinc-400">
             Created by {creator.substring(0, 15) + "..."}
           </p>
 

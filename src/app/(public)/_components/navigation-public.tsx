@@ -22,6 +22,7 @@ import {
   NavigationMenuLink,
   NavigationMenuList,
   NavigationMenuTrigger,
+  navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
 import { cn } from "@/lib/utils";
 
@@ -143,7 +144,12 @@ const NavigationPublic: React.FC = () => {
             <NavigationMenuList>
               <NavigationMenuItem>
                 <Link href="/" legacyBehavior passHref>
-                  <NavigationMenuLink className="focus:text-accent-foreground text-md block space-y-1 rounded-md p-3 leading-none no-underline transition-colors outline-none select-none">
+                  <NavigationMenuLink
+                    className={cn(
+                      navigationMenuTriggerStyle(),
+                      "focus:text-accent-foreground text-md block space-y-1 rounded-md bg-transparent p-3 leading-none no-underline transition-colors outline-none select-none",
+                    )}
+                  >
                     Home
                   </NavigationMenuLink>
                 </Link>
@@ -169,14 +175,24 @@ const NavigationPublic: React.FC = () => {
               </NavigationMenuItem>
               <NavigationMenuItem>
                 <Link href="/" legacyBehavior passHref>
-                  <NavigationMenuLink className="focus:text-accent-foreground text-md block space-y-1 rounded-md p-3 leading-none no-underline transition-colors outline-none select-none">
+                  <NavigationMenuLink
+                    className={cn(
+                      navigationMenuTriggerStyle(),
+                      "focus:text-accent-foreground text-md block space-y-1 rounded-md bg-transparent p-3 leading-none no-underline transition-colors outline-none select-none",
+                    )}
+                  >
                     Docs
                   </NavigationMenuLink>
                 </Link>
               </NavigationMenuItem>
               <NavigationMenuItem>
                 <Link href="/dao" legacyBehavior passHref>
-                  <NavigationMenuLink className="focus:text-accent-foreground text-md block space-y-1 rounded-md p-3 leading-none no-underline transition-colors outline-none select-none">
+                  <NavigationMenuLink
+                    className={cn(
+                      navigationMenuTriggerStyle(),
+                      "focus:text-accent-foreground text-md block space-y-1 rounded-md bg-transparent p-3 leading-none no-underline transition-colors outline-none select-none",
+                    )}
+                  >
                     Dao
                   </NavigationMenuLink>
                 </Link>
