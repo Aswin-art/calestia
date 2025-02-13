@@ -2,10 +2,10 @@
 
 import Link from "next/link";
 
-import { useState } from "react";
+import React, { useState } from "react";
 import { routeNav } from "@/assets/data";
 import { useRouter } from "next/navigation";
-import { Instagram, Menu, X } from "lucide-react";
+import { Instagram, Lock, Menu, X } from "lucide-react";
 import {
   useMotionValueEvent,
   AnimatePresence,
@@ -15,6 +15,15 @@ import {
 import IconDiscord from "@/assets/icons/discord";
 import IconTwitter from "@/assets/icons/twitter";
 import IconTelegram from "@/assets/icons/telegram";
+import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+} from "@/components/ui/navigation-menu";
+import { cn } from "@/lib/utils";
 
 const NavigationPublic: React.FC = () => {
   const { scrollY } = useScroll();
@@ -71,6 +80,52 @@ const NavigationPublic: React.FC = () => {
     },
   };
 
+  const components: {
+    title: string;
+    isLock: boolean;
+    href: string;
+    description: string;
+  }[] = [
+    {
+      title: "Chat AI",
+      isLock: false,
+      href: "/chat-ai",
+      description:
+        "Berinteraksi secara real-time dengan AI untuk mendapatkan jawaban dan bantuan instan.",
+    },
+    {
+      title: "Video Generator",
+      isLock: true,
+      href: "/docs/primitives/hover-card",
+      description: "Buat video otomatis dari teks atau gambar dengan AI.",
+    },
+    {
+      title: "Image Generator",
+      isLock: true,
+      href: "/docs/primitives/progress",
+      description: "Hasilkan gambar AI berkualitas tinggi dari deskripsi Anda.",
+    },
+    {
+      title: "Face Editor",
+      isLock: true,
+      href: "/docs/primitives/scroll-area",
+      description: "Edit wajah dalam foto dengan fitur retouching otomatis.",
+    },
+    {
+      title: "Audio Generator",
+      isLock: true,
+      href: "/docs/primitives/tabs",
+      description: "Ciptakan suara atau musik AI dengan cepat dan mudah.",
+    },
+    {
+      title: "Many More",
+      isLock: false,
+      href: "/#timeline",
+      description:
+        "Nikmati lebih banyak fitur menarik untuk kebutuhan digital Anda.",
+    },
+  ];
+
   return (
     <header
       className={`fixed inset-x-0 top-0 z-50 border-b backdrop-blur duration-200 ${
@@ -80,25 +135,89 @@ const NavigationPublic: React.FC = () => {
       }`}
     >
       <nav className="flex items-center justify-between px-4 py-8 lg:py-6">
-        <div className="flex items-center gap-[1ch]">
+        <div className="flex flex-1 items-center">
           <Link href={"/"} className="size-5 rounded-full bg-yellow-400" />
         </div>
-        <div className="text-md text-zinc-40gap-x-0 flex gap-x-3 sm:gap-x-5">
-          <IconDiscord className="size-5" />
-          <Link href={"/projects"}>
-            <IconTwitter className="size-5 fill-white" />
+        <div className="hidden flex-1 justify-center lg:flex">
+          <NavigationMenu>
+            <NavigationMenuList>
+              <NavigationMenuItem>
+                <Link href="/" legacyBehavior passHref>
+                  <NavigationMenuLink className="focus:text-accent-foreground text-md block space-y-1 rounded-md p-3 leading-none no-underline transition-colors outline-none select-none">
+                    Home
+                  </NavigationMenuLink>
+                </Link>
+              </NavigationMenuItem>
+              <NavigationMenuItem>
+                <NavigationMenuTrigger className="text-md bg-transparent">
+                  Products
+                </NavigationMenuTrigger>
+                <NavigationMenuContent>
+                  <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
+                    {components.map((component) => (
+                      <ListItem
+                        key={component.title}
+                        title={component.title}
+                        href={component.href}
+                        isLock={component.isLock}
+                      >
+                        {component.description}
+                      </ListItem>
+                    ))}
+                  </ul>
+                </NavigationMenuContent>
+              </NavigationMenuItem>
+              <NavigationMenuItem>
+                <Link href="/" legacyBehavior passHref>
+                  <NavigationMenuLink className="focus:text-accent-foreground text-md block space-y-1 rounded-md p-3 leading-none no-underline transition-colors outline-none select-none">
+                    Docs
+                  </NavigationMenuLink>
+                </Link>
+              </NavigationMenuItem>
+              <NavigationMenuItem>
+                <Link href="/dao" legacyBehavior passHref>
+                  <NavigationMenuLink className="focus:text-accent-foreground text-md block space-y-1 rounded-md p-3 leading-none no-underline transition-colors outline-none select-none">
+                    Dao
+                  </NavigationMenuLink>
+                </Link>
+              </NavigationMenuItem>
+            </NavigationMenuList>
+          </NavigationMenu>
+        </div>
+
+        <div className="text-md text-zinc-40 hidden flex-1 justify-end gap-x-3 sm:gap-x-5 lg:flex">
+          <Link
+            href={"/#"}
+            className="hover:bg-accent rounded border border-white/50 p-1.5"
+          >
+            <IconDiscord className="size-4" />
           </Link>
-          <Link href="#">
-            <Instagram className="size-5 stroke-white" />
+          <Link
+            href={"/#"}
+            className="hover:bg-accent rounded border border-white/50 p-1.5"
+          >
+            <IconTwitter className="size-4 fill-white" />
+          </Link>
+          <Link
+            href="#"
+            className="hover:bg-accent rounded border border-white/50 p-1.5"
+          >
+            <Instagram className="size-4" />
           </Link>
 
-          <Link href="#">
-            <IconTelegram className="size-5" />
+          <Link
+            href="#"
+            className="hover:bg-accent rounded border border-white/50 p-1.5"
+          >
+            <IconTelegram className="size-4" />
           </Link>
         </div>
 
-        <Menu className="size-6 cursor-pointer" onClick={toggleMenu} />
+        <div className="block lg:hidden">
+          <Menu className="cursor-pointer" onClick={toggleMenu} />
+        </div>
       </nav>
+
       <AnimatePresence>
         {open && (
           <motion.div
@@ -177,3 +296,50 @@ const MobileNavLink = ({
     </motion.button>
   );
 };
+
+interface ListItemProps extends React.ComponentPropsWithoutRef<"a"> {
+  title: string;
+  isLock?: boolean;
+}
+
+const ListItem = React.forwardRef<React.ElementRef<"a">, ListItemProps>(
+  ({ className, title, children, isLock, onClick, ...props }, ref) => {
+    const handleClick = (
+      e: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
+    ) => {
+      if (isLock) {
+        e.preventDefault();
+        return;
+      }
+      if (onClick) onClick(e);
+    };
+
+    return (
+      <li>
+        <a
+          ref={ref}
+          onClick={handleClick}
+          className={cn(
+            "relative block space-y-1 rounded-md p-3 leading-none no-underline transition-colors outline-none select-none",
+            !isLock &&
+              "hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
+            isLock && "cursor-not-allowed",
+            className,
+          )}
+          {...props}
+        >
+          {isLock && (
+            <div className="pointer-events-none absolute inset-0 flex items-center justify-center gap-2 bg-black/60 transition-colors">
+              <Lock className="h-6 w-6 text-white" /> Coming Soon
+            </div>
+          )}
+          <div className="text-sm leading-none font-medium">{title}</div>
+          <p className="text-muted-foreground line-clamp-2 text-sm leading-snug">
+            {children}
+          </p>
+        </a>
+      </li>
+    );
+  },
+);
+ListItem.displayName = "ListItem";

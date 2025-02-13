@@ -104,6 +104,31 @@ const DetailVote: React.FC<{
       },
     );
   };
+
+  const convertTimeStamp = (timestamp: number) => {
+    const timestampNumber = Number(timestamp);
+
+    const targetDate = new Date(timestampNumber * 1000);
+    const now = new Date();
+
+    const utcString = targetDate.toISOString();
+    const localString = targetDate.toLocaleString();
+
+    const timeDiffMs = targetDate.getTime() - now.getTime();
+    const hoursRemaining = timeDiffMs / (1000 * 60 * 60);
+
+    const hoursRemainingText =
+      hoursRemaining < 1
+        ? "end in less than 1 hour"
+        : `${hoursRemaining.toFixed(2)} hours remaining`;
+
+    return {
+      utc: utcString,
+      local: localString,
+      hoursRemaining: hoursRemainingText,
+    };
+  };
+
   return (
     <aside
       className={cn("mt-10 h-full w-full md:col-span-4 md:mt-24", {
@@ -174,9 +199,11 @@ const DetailVote: React.FC<{
             <TimelineContent>Jan 29, 2025 - 6:11 PM</TimelineContent>
           </TimelineItem>
           <TimelineItem status="done">
-            <TimelineHeading>Test</TimelineHeading>
+            <TimelineHeading>End</TimelineHeading>
             <TimelineDot status="done" />
-            <TimelineContent>Jan 29, 2025 - 6:11 PM</TimelineContent>
+            <TimelineContent>
+              {convertTimeStamp(result?.endTime).local}
+            </TimelineContent>
           </TimelineItem>
         </Timeline>
       </div>

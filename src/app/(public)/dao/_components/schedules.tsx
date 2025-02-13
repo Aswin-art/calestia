@@ -56,6 +56,8 @@ const formSchemaEmergency = z.object({
   }),
 });
 
+const coOwnerWallet = process.env.NEXT_PUBLIC_CO_OWNER_WALLET_ADDRESS;
+
 export const Schedule: React.FC = () => {
   const { address } = useAccount();
   const { writeContract } = useWriteContract();
@@ -87,12 +89,7 @@ export const Schedule: React.FC = () => {
     functionName: "getAllProposals",
   });
 
-  const { data: isCoOwners } = useReadContract({
-    abi: config.abi,
-    address: config.address as `0x${string}`,
-    functionName: "coOwners",
-    args: [address],
-  });
+  const isCoOwners = address === coOwnerWallet;
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     if (!address)
@@ -234,197 +231,206 @@ export const Schedule: React.FC = () => {
           </p>
 
           <div className="flex gap-2">
-            <Dialog open={open}>
-              <button
-                disabled={loading}
-                onClick={() => setOpen(true)}
-                type="button"
-                className="animate-shimmer mx-auto ml-auto inline-flex h-12 cursor-pointer items-center justify-center rounded-full border border-slate-800 bg-[linear-gradient(110deg,#000103,45%,#1e2631,55%,#000103)] bg-[length:200%_100%] px-6 font-semibold text-zinc-500 transition-colors hover:text-slate-400 focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 focus:ring-offset-slate-50 focus:outline-hidden"
-              >
-                Create Proposal
-              </button>
-              <DialogContent className="w-11/12 sm:max-w-md">
-                <DialogHeader>
-                  <DialogTitle>Create Proposal</DialogTitle>
-                  <DialogDescription>
-                    Fill out the form below to create a proposal. Provide the
-                    necessary details to submit your proposal efficiently.
-                  </DialogDescription>
-                </DialogHeader>
-
-                <Form {...form}>
-                  <form
-                    onSubmit={form.handleSubmit(onSubmit)}
-                    className="grid grid-cols-4 items-center gap-4 space-y-4"
+            {address && (
+              <>
+                <Dialog open={open}>
+                  <button
+                    disabled={loading}
+                    onClick={() => setOpen(true)}
+                    type="button"
+                    className="animate-shimmer mx-auto ml-auto inline-flex h-12 cursor-pointer items-center justify-center rounded-full border border-slate-800 bg-[linear-gradient(110deg,#000103,45%,#1e2631,55%,#000103)] bg-[length:200%_100%] px-6 font-semibold text-zinc-500 transition-colors hover:text-slate-400 focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 focus:ring-offset-slate-50 focus:outline-hidden"
                   >
-                    <FormField
-                      control={form.control}
-                      name="title"
-                      render={({ field }) => (
-                        <FormItem className="col-span-4">
-                          <FormLabel>Title</FormLabel>
-                          <FormControl>
-                            <Input
-                              placeholder="title..."
-                              autoComplete="off"
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="description"
-                      render={({ field }) => (
-                        <FormItem className="col-span-4">
-                          <FormLabel>Description</FormLabel>
-                          <FormControl>
-                            <Textarea
-                              placeholder="proposal description...."
-                              autoComplete="off"
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                    Create Proposal
+                  </button>
+                  <DialogContent className="w-11/12 sm:max-w-md">
+                    <DialogHeader>
+                      <DialogTitle>Create Proposal</DialogTitle>
+                      <DialogDescription>
+                        Fill out the form below to create a proposal. Provide
+                        the necessary details to submit your proposal
+                        efficiently.
+                      </DialogDescription>
+                    </DialogHeader>
 
-                    <div className="flex w-full gap-2">
-                      <Button
-                        onClick={() => setOpen(false)}
-                        type="button"
-                        variant={"outline"}
-                        disabled={loading}
-                        className="cursor-pointer"
+                    <Form {...form}>
+                      <form
+                        onSubmit={form.handleSubmit(onSubmit)}
+                        className="grid grid-cols-4 items-center gap-4 space-y-4"
                       >
-                        Close
-                      </Button>
-                      <Button
-                        disabled={loading}
-                        type="submit"
-                        className="cursor-pointer"
-                      >
-                        {loading ? (
-                          <>
-                            <Loader2 className="animate-spin" /> Loading...
-                          </>
-                        ) : (
-                          <>Submit</>
-                        )}
-                      </Button>
-                    </div>
-                  </form>
-                </Form>
-              </DialogContent>
-            </Dialog>
-            {!isCoOwners && (
-              <Dialog open={openEmergency}>
-                <button
-                  disabled={loading}
-                  onClick={() => setOpenEmergency(true)}
-                  type="button"
-                  className="animate-shimmer mx-auto ml-auto inline-flex h-12 cursor-pointer items-center justify-center rounded-full border border-slate-800 bg-[linear-gradient(110deg,#000103,45%,#1e2631,55%,#000103)] bg-[length:200%_100%] px-6 font-semibold text-zinc-500 transition-colors hover:text-slate-400 focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 focus:ring-offset-slate-50 focus:outline-hidden"
-                >
-                  Create Emergency Proposal
-                </button>
-                <DialogContent className="w-11/12 sm:max-w-md">
-                  <DialogHeader>
-                    <DialogTitle>Create Emergency</DialogTitle>
-                    <DialogDescription>
-                      Fill out the form below to create an emergency proposal.
-                    </DialogDescription>
-                  </DialogHeader>
-
-                  <Form {...formEmergency}>
-                    <form
-                      onSubmit={formEmergency.handleSubmit(onSubmitEmergency)}
-                      className="grid grid-cols-4 items-center gap-4 space-y-4"
-                    >
-                      <FormField
-                        control={formEmergency.control}
-                        name="title"
-                        render={({ field }) => (
-                          <FormItem className="col-span-4">
-                            <FormLabel>Title</FormLabel>
-                            <FormControl>
-                              <Input
-                                placeholder="title..."
-                                autoComplete="off"
-                                {...field}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={formEmergency.control}
-                        name="description"
-                        render={({ field }) => (
-                          <FormItem className="col-span-4">
-                            <FormLabel>Description</FormLabel>
-                            <FormControl>
-                              <Textarea
-                                placeholder="proposal description...."
-                                autoComplete="off"
-                                {...field}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={formEmergency.control}
-                        name="duration"
-                        render={({ field }) => (
-                          <FormItem className="col-span-4">
-                            <FormLabel>Durasi Jam</FormLabel>
-                            <FormControl>
-                              <Input
-                                placeholder="hours duration..."
-                                autoComplete="off"
-                                type="number"
-                                min={1}
-                                {...field}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-
-                      <div className="flex w-full gap-2">
-                        <Button
-                          onClick={() => setOpenEmergency(false)}
-                          type="button"
-                          disabled={loading}
-                          variant={"outline"}
-                          className="cursor-pointer"
-                        >
-                          Close
-                        </Button>
-                        <Button
-                          type="submit"
-                          disabled={loading}
-                          className="cursor-pointer"
-                        >
-                          {loading ? (
-                            <>
-                              <Loader2 className="animate-spin" /> Loading...
-                            </>
-                          ) : (
-                            <>Submit</>
+                        <FormField
+                          control={form.control}
+                          name="title"
+                          render={({ field }) => (
+                            <FormItem className="col-span-4">
+                              <FormLabel>Title</FormLabel>
+                              <FormControl>
+                                <Input
+                                  placeholder="title..."
+                                  autoComplete="off"
+                                  {...field}
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
                           )}
-                        </Button>
-                      </div>
-                    </form>
-                  </Form>
-                </DialogContent>
-              </Dialog>
+                        />
+                        <FormField
+                          control={form.control}
+                          name="description"
+                          render={({ field }) => (
+                            <FormItem className="col-span-4">
+                              <FormLabel>Description</FormLabel>
+                              <FormControl>
+                                <Textarea
+                                  placeholder="proposal description...."
+                                  autoComplete="off"
+                                  {...field}
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+
+                        <div className="flex w-full gap-2">
+                          <Button
+                            onClick={() => setOpen(false)}
+                            type="button"
+                            variant={"outline"}
+                            disabled={loading}
+                            className="cursor-pointer"
+                          >
+                            Close
+                          </Button>
+                          <Button
+                            disabled={loading}
+                            type="submit"
+                            className="cursor-pointer"
+                          >
+                            {loading ? (
+                              <>
+                                <Loader2 className="animate-spin" /> Loading...
+                              </>
+                            ) : (
+                              <>Submit</>
+                            )}
+                          </Button>
+                        </div>
+                      </form>
+                    </Form>
+                  </DialogContent>
+                </Dialog>
+                {isCoOwners && (
+                  <Dialog open={openEmergency}>
+                    <button
+                      disabled={loading}
+                      onClick={() => setOpenEmergency(true)}
+                      type="button"
+                      className="animate-shimmer mx-auto ml-auto inline-flex h-12 cursor-pointer items-center justify-center rounded-full border border-slate-800 bg-[linear-gradient(110deg,#000103,45%,#1e2631,55%,#000103)] bg-[length:200%_100%] px-6 font-semibold text-zinc-500 transition-colors hover:text-slate-400 focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 focus:ring-offset-slate-50 focus:outline-hidden"
+                    >
+                      Create Emergency Proposal
+                    </button>
+                    <DialogContent className="w-11/12 sm:max-w-md">
+                      <DialogHeader>
+                        <DialogTitle>Create Emergency</DialogTitle>
+                        <DialogDescription>
+                          Fill out the form below to create an emergency
+                          proposal.
+                        </DialogDescription>
+                      </DialogHeader>
+
+                      <Form {...formEmergency}>
+                        <form
+                          onSubmit={formEmergency.handleSubmit(
+                            onSubmitEmergency,
+                          )}
+                          className="grid grid-cols-4 items-center gap-4 space-y-4"
+                        >
+                          <FormField
+                            control={formEmergency.control}
+                            name="title"
+                            render={({ field }) => (
+                              <FormItem className="col-span-4">
+                                <FormLabel>Title</FormLabel>
+                                <FormControl>
+                                  <Input
+                                    placeholder="title..."
+                                    autoComplete="off"
+                                    {...field}
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                          <FormField
+                            control={formEmergency.control}
+                            name="description"
+                            render={({ field }) => (
+                              <FormItem className="col-span-4">
+                                <FormLabel>Description</FormLabel>
+                                <FormControl>
+                                  <Textarea
+                                    placeholder="proposal description...."
+                                    autoComplete="off"
+                                    {...field}
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                          <FormField
+                            control={formEmergency.control}
+                            name="duration"
+                            render={({ field }) => (
+                              <FormItem className="col-span-4">
+                                <FormLabel>Durasi Jam</FormLabel>
+                                <FormControl>
+                                  <Input
+                                    placeholder="hours duration..."
+                                    autoComplete="off"
+                                    type="number"
+                                    min={1}
+                                    {...field}
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+
+                          <div className="flex w-full gap-2">
+                            <Button
+                              onClick={() => setOpenEmergency(false)}
+                              type="button"
+                              disabled={loading}
+                              variant={"outline"}
+                              className="cursor-pointer"
+                            >
+                              Close
+                            </Button>
+                            <Button
+                              type="submit"
+                              disabled={loading}
+                              className="cursor-pointer"
+                            >
+                              {loading ? (
+                                <>
+                                  <Loader2 className="animate-spin" />{" "}
+                                  Loading...
+                                </>
+                              ) : (
+                                <>Submit</>
+                              )}
+                            </Button>
+                          </div>
+                        </form>
+                      </Form>
+                    </DialogContent>
+                  </Dialog>
+                )}
+              </>
             )}
           </div>
         </div>
@@ -441,6 +447,7 @@ export const Schedule: React.FC = () => {
                   title={proposal.title}
                   description={proposal.description}
                   creator={proposal.creator}
+                  executed={proposal.executed}
                 />
               </Link>
             ))}

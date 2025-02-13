@@ -72,9 +72,13 @@ export const DetailProposal: React.FC<{ result: any; votesData: any }> = ({
 
             <Button
               type="button"
-              className="rounded-full bg-green-600 px-9 text-lg font-semibold text-white hover:bg-green-700"
+              className={`rounded-full px-9 text-lg font-semibold text-white ${
+                result?.executed
+                  ? "bg-red-600 hover:bg-red-600"
+                  : "bg-green-600 hover:bg-green-600"
+              }`}
             >
-              Active
+              {result?.executed ? "Ended" : "Active"}
             </Button>
 
             <div className="flex items-center gap-x-2">

@@ -5,10 +5,12 @@ export default function DaoProposal({
   title,
   description,
   creator,
+  executed,
 }: {
   title: string;
   description: string;
   creator: string;
+  executed: boolean;
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
@@ -52,9 +54,15 @@ export default function DaoProposal({
           </h2>
 
           <div className="flex items-center gap-x-2">
-            <div className="size-2 rounded-full bg-green-600"></div>
-            <p className="truncate text-sm">{creator}</p>
+            <div
+              className={`size-2 rounded-full ${executed ? "bg-red-600" : "bg-green-600"}`}
+            ></div>
+            <p className="truncate text-sm">{executed ? "Ended" : "Active"}</p>
           </div>
+
+          <p className="line-clamp-6 text-sm text-zinc-400 group-hover:text-zinc-200">
+            Created by {creator.substring(0, 15) + "..."}
+          </p>
 
           <p className="mt-4 line-clamp-6 text-sm text-zinc-400 group-hover:text-zinc-200">
             {description}
