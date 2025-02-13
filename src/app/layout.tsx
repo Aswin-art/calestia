@@ -19,10 +19,10 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "arcalis.com",
-    template: "%s | arcalis.com",
+    default: "Arcalis",
+    template: "%s | Arcalis",
   },
-  description: "I'm building AI tools to solve problem for developers.",
+  description: "Switch Models Like Chains - The Multi-AI Ecosystem.",
 };
 
 export default function RootLayout({

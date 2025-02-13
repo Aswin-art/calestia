@@ -2,9 +2,15 @@
 import { Button, buttonVariants } from "@/components/ui/button";
 import { ConnectButton, useConnectModal } from "@rainbow-me/rainbowkit";
 import { ArrowDown } from "lucide-react";
+import localFont from "next/font/local";
 import Link from "next/link";
 import React from "react";
 import { useAccount } from "wagmi";
+
+const heroFont = localFont({
+  src: "../../../assets/fonts/eavm.otf",
+  variable: "--font-eavm",
+});
 
 const HeroRoot: React.FC = () => {
   const { address } = useAccount();
@@ -13,7 +19,9 @@ const HeroRoot: React.FC = () => {
     <section className="flex min-h-screen w-screen flex-col items-center justify-center">
       <div className="animate-glow animate-fade-left hidden h-px w-screen bg-linear-to-r from-zinc-300/0 via-zinc-300/50 to-zinc-300/0 md:block" />
 
-      <h1 className="text-edge-outline font-display animate-title duration-3s z-10 cursor-default bg-white bg-linear-to-b from-neutral-50 to-neutral-400 bg-clip-text px-0.5 py-3.5 text-6xl font-bold whitespace-nowrap text-transparent sm:text-7xl md:text-9xl">
+      <h1
+        className={`${heroFont.className} text-edge-outline animate-title duration-3s z-10 cursor-default bg-white bg-linear-to-b from-neutral-50 to-neutral-400 bg-clip-text px-0.5 py-3.5 text-6xl font-bold whitespace-nowrap text-transparent sm:text-7xl md:text-9xl`}
+      >
         Arcalis
       </h1>
 
