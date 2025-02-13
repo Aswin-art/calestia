@@ -5,7 +5,7 @@ import Link from "next/link";
 import React, { useState } from "react";
 import { routeNav } from "@/assets/data";
 import { useRouter } from "next/navigation";
-import { Instagram, Lock, Menu, X } from "lucide-react";
+import { Instagram, Linkedin, Lock, Menu, X } from "lucide-react";
 import {
   useMotionValueEvent,
   AnimatePresence,
@@ -25,6 +25,14 @@ import {
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
 import { cn } from "@/lib/utils";
+import localFont from "next/font/local";
+import Wrapper from "@/components/wrapper";
+import { Badge } from "@/components/ui/badge";
+
+const marsFont = localFont({
+  src: "../../../assets/fonts/mars.otf",
+  variable: "--font-mars",
+});
 
 const NavigationPublic: React.FC = () => {
   const { scrollY } = useScroll();
@@ -135,104 +143,145 @@ const NavigationPublic: React.FC = () => {
           : "border-zinc-800 bg-zinc-900/500"
       }`}
     >
-      <nav className="flex items-center justify-between px-4 py-8 lg:py-6">
-        <div className="flex flex-1 items-center">
-          <Link href={"/"} className="size-5 rounded-full bg-yellow-400" />
-        </div>
-        <div className="hidden flex-1 justify-center lg:flex">
-          <NavigationMenu>
-            <NavigationMenuList>
-              <NavigationMenuItem>
-                <Link href="/" legacyBehavior passHref>
-                  <NavigationMenuLink
-                    className={cn(
-                      navigationMenuTriggerStyle(),
-                      "focus:text-accent-foreground text-md block space-y-1 rounded-md bg-transparent p-3 leading-none no-underline transition-colors outline-none select-none",
-                    )}
+      <Wrapper>
+        <nav className="flex items-center justify-between px-4 py-8 lg:py-6">
+          <div className="flex flex-1 items-center gap-1">
+            <div className="relative inline-block">
+              <Link href="/" className={`${marsFont.className} text-2xl`}>
+                Arcalis
+              </Link>
+              <Badge
+                variant="outline"
+                className="absolute -top-2 -right-25" // sesuaikan nilai top/right sesuai kebutuhan
+              >
+                <span className="text-xs text-red-500">Beta Version</span>
+              </Badge>
+            </div>
+          </div>
+          <div className="hidden flex-1 justify-center lg:flex">
+            <NavigationMenu>
+              <NavigationMenuList>
+                <NavigationMenuItem>
+                  <Link href="/" legacyBehavior passHref>
+                    <NavigationMenuLink
+                      className={cn(
+                        navigationMenuTriggerStyle(),
+                        "text-md bg-transparent",
+                      )}
+                    >
+                      Home
+                    </NavigationMenuLink>
+                  </Link>
+                </NavigationMenuItem>
+                <NavigationMenuItem>
+                  <NavigationMenuTrigger className="text-md bg-transparent">
+                    Products
+                  </NavigationMenuTrigger>
+                  <NavigationMenuContent>
+                    <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
+                      {components.map((component) => (
+                        <ListItem
+                          key={component.title}
+                          title={component.title}
+                          href={component.href}
+                          isLock={component.isLock}
+                        >
+                          {component.description}
+                        </ListItem>
+                      ))}
+                    </ul>
+                  </NavigationMenuContent>
+                </NavigationMenuItem>
+                <NavigationMenuItem>
+                  <Link
+                    target="_blank"
+                    href="https://garrulous-coyote-265.notion.site/Arcalis-Documentation-1996834eb34880238e47cca691c1ed90"
+                    legacyBehavior
+                    passHref
                   >
-                    Home
-                  </NavigationMenuLink>
-                </Link>
-              </NavigationMenuItem>
-              <NavigationMenuItem>
-                <NavigationMenuTrigger className="text-md bg-transparent">
-                  Products
-                </NavigationMenuTrigger>
-                <NavigationMenuContent>
-                  <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
-                    {components.map((component) => (
-                      <ListItem
-                        key={component.title}
-                        title={component.title}
-                        href={component.href}
-                        isLock={component.isLock}
-                      >
-                        {component.description}
-                      </ListItem>
-                    ))}
-                  </ul>
-                </NavigationMenuContent>
-              </NavigationMenuItem>
-              <NavigationMenuItem>
-                <Link href="/" legacyBehavior passHref>
-                  <NavigationMenuLink
-                    className={cn(
-                      navigationMenuTriggerStyle(),
-                      "focus:text-accent-foreground text-md block space-y-1 rounded-md bg-transparent p-3 leading-none no-underline transition-colors outline-none select-none",
-                    )}
-                  >
-                    Docs
-                  </NavigationMenuLink>
-                </Link>
-              </NavigationMenuItem>
-              <NavigationMenuItem>
-                <Link href="/dao" legacyBehavior passHref>
-                  <NavigationMenuLink
-                    className={cn(
-                      navigationMenuTriggerStyle(),
-                      "focus:text-accent-foreground text-md block space-y-1 rounded-md bg-transparent p-3 leading-none no-underline transition-colors outline-none select-none",
-                    )}
-                  >
-                    Dao
-                  </NavigationMenuLink>
-                </Link>
-              </NavigationMenuItem>
-            </NavigationMenuList>
-          </NavigationMenu>
-        </div>
+                    <NavigationMenuLink
+                      className={cn(
+                        navigationMenuTriggerStyle(),
+                        "text-md bg-transparent",
+                      )}
+                    >
+                      Docs
+                    </NavigationMenuLink>
+                  </Link>
+                </NavigationMenuItem>
+                <NavigationMenuItem>
+                  <Link href="/" legacyBehavior passHref>
+                    <NavigationMenuLink
+                      className={cn(
+                        navigationMenuTriggerStyle(),
+                        "text-md bg-transparent",
+                      )}
+                    >
+                      White Paper
+                    </NavigationMenuLink>
+                  </Link>
+                </NavigationMenuItem>
+                <NavigationMenuItem>
+                  <Link href="/dao" legacyBehavior passHref>
+                    <NavigationMenuLink
+                      className={cn(
+                        navigationMenuTriggerStyle(),
+                        "text-md bg-transparent",
+                      )}
+                    >
+                      DAO
+                    </NavigationMenuLink>
+                  </Link>
+                </NavigationMenuItem>
+              </NavigationMenuList>
+            </NavigationMenu>
+          </div>
 
-        <div className="text-md text-zinc-40 hidden flex-1 justify-end gap-x-3 sm:gap-x-5 lg:flex">
-          <Link
-            href={"/#"}
-            className="hover:bg-accent rounded border border-white/50 p-1.5"
-          >
-            <IconDiscord className="size-4" />
-          </Link>
-          <Link
-            href={"/#"}
-            className="hover:bg-accent rounded border border-white/50 p-1.5"
-          >
-            <IconTwitter className="size-4 fill-white" />
-          </Link>
-          <Link
-            href="#"
-            className="hover:bg-accent rounded border border-white/50 p-1.5"
-          >
-            <Instagram className="size-4" />
-          </Link>
+          <div className="text-md text-zinc-40 hidden flex-1 justify-end gap-x-2 sm:gap-x-5 lg:flex">
+            <Link
+              href={"https://discord.gg/ps4HpGEcS7"}
+              target="_blank"
+              className="hover:bg-accent rounded border border-white/50 p-1.5"
+            >
+              <IconDiscord className="size-4" />
+            </Link>
+            <Link
+              href={"/#"}
+              target="_blank"
+              className="hover:bg-accent rounded border border-white/50 p-1.5"
+            >
+              <IconTwitter className="size-4 fill-white" />
+            </Link>
+            <Link
+              href={"#"}
+              target="_blank"
+              className="hover:bg-accent rounded border border-white/50 p-1.5"
+            >
+              <Instagram className="size-4" />
+            </Link>
 
-          <Link
-            href="#"
-            className="hover:bg-accent rounded border border-white/50 p-1.5"
-          >
-            <IconTelegram className="size-4" />
-          </Link>
-        </div>
+            <Link
+              href={"#"}
+              target="_blank"
+              className="hover:bg-accent rounded border border-white/50 p-1.5"
+            >
+              <IconTelegram className="size-4" />
+            </Link>
 
-        <div className="block lg:hidden">
-          <Menu className="cursor-pointer" onClick={toggleMenu} />
-        </div>
-      </nav>
+            <Link
+              href={"https://www.linkedin.com/company/arcalisai/"}
+              target="_blank"
+              className="hover:bg-accent rounded border border-white/50 p-1.5"
+            >
+              <Linkedin className="size-4" />
+            </Link>
+          </div>
+
+          <div className="block lg:hidden">
+            <Menu className="cursor-pointer" onClick={toggleMenu} />
+          </div>
+        </nav>
+      </Wrapper>
 
       <AnimatePresence>
         {open && (
