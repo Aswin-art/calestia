@@ -475,55 +475,56 @@ export const Schedule: React.FC = () => {
             )}
           </div>
         </div>
-        {loadingFetch && (
+        {loadingFetch ? (
           <div className="mt-20 flex items-center justify-center">
             <Loader2 className="animate-spin" />
           </div>
+        ) : (
+          <Tabs defaultValue="general" className="mx-auto mt-10">
+            <TabsList>
+              <TabsTrigger value="general">General</TabsTrigger>
+              <TabsTrigger value="emergency">Emergency</TabsTrigger>
+            </TabsList>
+            <TabsContent value="general">
+              <div className="mt-8 grid grid-cols-[repeat(auto-fill,_minmax(300px,_1fr))] gap-4 lg:mt-14">
+                {proposals.generals.length > 0 ? (
+                  Array.isArray(proposals.generals) &&
+                  proposals.generals.map((proposal: any) => (
+                    <Link href={`/dao/${proposal.dbId}`} key={proposal.dbId}>
+                      <DaoProposal
+                        title={proposal.title}
+                        description={proposal.description}
+                        creator={proposal.creator}
+                        executed={proposal.executed}
+                      />
+                    </Link>
+                  ))
+                ) : (
+                  <p>There is no active proposals.</p>
+                )}
+              </div>
+            </TabsContent>
+            <TabsContent value="emergency">
+              <div className="mt-8 grid grid-cols-[repeat(auto-fill,_minmax(300px,_1fr))] gap-4 lg:mt-14">
+                {proposals.emergencies.length > 0 ? (
+                  Array.isArray(proposals.emergencies) &&
+                  proposals.emergencies.map((proposal: any) => (
+                    <Link href={`/dao/${proposal.dbId}`} key={proposal.dbId}>
+                      <DaoProposal
+                        title={proposal.title}
+                        description={proposal.description}
+                        creator={proposal.creator}
+                        executed={proposal.executed}
+                      />
+                    </Link>
+                  ))
+                ) : (
+                  <p>There is no active proposals.</p>
+                )}
+              </div>
+            </TabsContent>
+          </Tabs>
         )}
-        <Tabs defaultValue="general" className="mx-auto mt-10">
-          <TabsList>
-            <TabsTrigger value="general">General</TabsTrigger>
-            <TabsTrigger value="emergency">Emergency</TabsTrigger>
-          </TabsList>
-          <TabsContent value="general">
-            <div className="mt-8 grid grid-cols-[repeat(auto-fill,_minmax(300px,_1fr))] gap-4 lg:mt-14">
-              {proposals.generals.length > 0 ? (
-                Array.isArray(proposals.generals) &&
-                proposals.generals.map((proposal: any) => (
-                  <Link href={`/dao/${proposal.dbId}`} key={proposal.dbId}>
-                    <DaoProposal
-                      title={proposal.title}
-                      description={proposal.description}
-                      creator={proposal.creator}
-                      executed={proposal.executed}
-                    />
-                  </Link>
-                ))
-              ) : (
-                <p>There is no active proposals.</p>
-              )}
-            </div>
-          </TabsContent>
-          <TabsContent value="emergency">
-            <div className="mt-8 grid grid-cols-[repeat(auto-fill,_minmax(300px,_1fr))] gap-4 lg:mt-14">
-              {proposals.emergencies.length > 0 ? (
-                Array.isArray(proposals.emergencies) &&
-                proposals.emergencies.map((proposal: any) => (
-                  <Link href={`/dao/${proposal.dbId}`} key={proposal.dbId}>
-                    <DaoProposal
-                      title={proposal.title}
-                      description={proposal.description}
-                      creator={proposal.creator}
-                      executed={proposal.executed}
-                    />
-                  </Link>
-                ))
-              ) : (
-                <p>There is no active proposals.</p>
-              )}
-            </div>
-          </TabsContent>
-        </Tabs>
       </div>
     </section>
   );

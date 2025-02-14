@@ -210,7 +210,11 @@ const NavigationPublic: React.FC = () => {
                   </Link>
                 </NavigationMenuItem>
                 <NavigationMenuItem>
-                  <Link href="/" legacyBehavior passHref>
+                  <Link
+                    href="https://drive.google.com/file/d/1U0V4Phvqj4NGSnarCfSS6iY7toTO8pw9/view?usp=sharing"
+                    legacyBehavior
+                    passHref
+                  >
                     <NavigationMenuLink
                       className={cn(
                         navigationMenuTriggerStyle(),
