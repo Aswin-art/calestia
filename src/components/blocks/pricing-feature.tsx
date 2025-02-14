@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Loader2, Minus, MoveRight } from "lucide-react";
+import { BadgeCheck, Loader2, Minus, MoveRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button, buttonVariants } from "@/components/ui/button";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAccount, useWriteContract } from "wagmi";
 import config from "@/lib/config";
 import { toast } from "sonner";
@@ -30,9 +30,21 @@ function PricingFeature() {
   const [loading, setLoading] = useState(false);
   const [openDialog, setOpenDialog] = useState(false);
   const [planName, setPlanName] = useState("");
+  const [userLevel, setUserLevel] = useState(0);
 
   const { address } = useAccount();
   const { writeContract } = useWriteContract();
+
+  const checkUserLevel = async () => {
+    const level: any = await publicClient.readContract({
+      address: config.address as `0x${string}`,
+      abi: config.abi,
+      functionName: "userLevel",
+      args: [address],
+    });
+
+    return setUserLevel(Number(level));
+  };
 
   const checkSubscription = async () => {
     if (!address) return false;
@@ -150,6 +162,12 @@ function PricingFeature() {
     }
   };
 
+  useEffect(() => {
+    if (address) {
+      checkUserLevel();
+    }
+  }, [address]);
+
   return (
     <div className="w-full py-20 lg:py-40">
       <div className="container mx-auto">
@@ -188,7 +206,15 @@ function PricingFeature() {
                     }),
                   )}
                 >
-                  Try it <MoveRight className="h-4 w-4" />
+                  {loading ? (
+                    <>
+                      <Loader2 className="animate-spin" /> Loading...
+                    </>
+                  ) : (
+                    <>
+                      Try it <MoveRight className="h-4 w-4" />
+                    </>
+                  )}
                 </Link>
               </div>
               <div className="flex flex-col gap-2 px-3 py-1 md:px-6 md:py-4">
@@ -205,13 +231,17 @@ function PricingFeature() {
                   </span>
                 </p>
                 <Button
-                  disabled={loading}
+                  disabled={loading || userLevel === 2}
                   onClick={() => confirmPurchase("Scholar")}
                   className="mt-8 cursor-pointer gap-4"
                 >
                   {loading ? (
                     <>
                       <Loader2 className="animate-spin" /> Loading...
+                    </>
+                  ) : userLevel === 2 ? (
+                    <>
+                      <BadgeCheck /> Current Level
                     </>
                   ) : (
                     <>
@@ -234,13 +264,17 @@ function PricingFeature() {
                   </span>
                 </p>
                 <Button
-                  disabled={loading}
+                  disabled={loading || userLevel === 3}
                   onClick={() => confirmPurchase("Innovator")}
                   className="mt-8 cursor-pointer gap-4"
                 >
                   {loading ? (
                     <>
                       <Loader2 className="animate-spin" /> Loading...
+                    </>
+                  ) : userLevel === 3 ? (
+                    <>
+                      <BadgeCheck /> Current Level
                     </>
                   ) : (
                     <>
@@ -264,13 +298,17 @@ function PricingFeature() {
                   </span>
                 </p>
                 <Button
-                  disabled={loading}
+                  disabled={loading || userLevel === 4}
                   onClick={() => confirmPurchase("Visionary")}
                   className="mt-8 cursor-pointer gap-4"
                 >
                   {loading ? (
                     <>
                       <Loader2 className="animate-spin" /> Loading...
+                    </>
+                  ) : userLevel === 4 ? (
+                    <>
+                      <BadgeCheck className="h-4 w-4" /> Current Level
                     </>
                   ) : (
                     <>

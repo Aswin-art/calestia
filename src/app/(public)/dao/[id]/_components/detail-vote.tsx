@@ -19,11 +19,12 @@ import { publicClient } from "@/lib/wagmi";
 
 const DetailVote: React.FC<{
   show: boolean;
+  executed: boolean;
   id: number;
   result: any;
   refetch: () => void;
   refetchVotes: () => void;
-}> = ({ show = true, id, result, refetch, refetchVotes }) => {
+}> = ({ show = true, executed, id, result, refetch, refetchVotes }) => {
   const { address } = useAccount();
   const { writeContract } = useWriteContract();
 
@@ -138,6 +139,7 @@ const DetailVote: React.FC<{
     >
       <div className="flex w-full gap-x-2.5 space-y-3.5">
         <Button
+          disabled={executed}
           onClick={() => setVote((prev) => (prev === true ? null : true))}
           type="button"
           className={`w-full cursor-pointer rounded-full border-2 border-solid bg-[rgba(255,255,255,0.1)] py-6 text-base font-semibold uppercase no-underline backdrop-blur-[30px] hover:bg-[rgba(255,255,255,0.2)] lg:text-lg ${
@@ -149,6 +151,7 @@ const DetailVote: React.FC<{
           For
         </Button>
         <Button
+          disabled={executed}
           onClick={() => setVote((prev) => (prev === false ? null : false))}
           type="button"
           className={`w-full cursor-pointer rounded-full border-2 border-solid bg-[rgba(255,255,255,0.1)] py-6 text-base font-semibold uppercase no-underline backdrop-blur-[30px] hover:bg-[rgba(255,255,255,0.2)] lg:text-lg ${

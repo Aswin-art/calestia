@@ -14,6 +14,7 @@ import DetailVote from "@/app/(public)/dao/[id]/_components/detail-vote";
 import { useParams } from "next/navigation";
 import config from "@/lib/config";
 import { publicClient } from "@/lib/wagmi";
+import Wrapper from "@/components/wrapper";
 
 export default function PageDetailDao() {
   const [loadingFetch, setLoadingFetch] = useState(true);
@@ -21,6 +22,21 @@ export default function PageDetailDao() {
   const [votesData, setVotesData] = useState<any>([]);
 
   const params = useParams();
+
+  const fetchVotesData = async (id?: number) => {
+    try {
+      const result: any = await publicClient.readContract({
+        abi: config.abi,
+        address: config.address as `0x${string}`,
+        functionName: "getVoterDetails",
+        args: [id],
+      });
+
+      setVotesData(result);
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   const fetchDetailProposal = async () => {
     try {
@@ -31,31 +47,17 @@ export default function PageDetailDao() {
         args: [params.id],
       });
 
-      setProposals(result);
-      setLoadingFetch(false);
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  const fetchVotesData = async () => {
-    try {
-      const result: any = await publicClient.readContract({
-        abi: config.abi,
-        address: config.address as `0x${string}`,
-        functionName: "getVoterDetails",
-        args: [proposals?.id],
-      });
-
-      setVotesData(result);
-      setLoadingFetch(false);
+      if (result) {
+        fetchVotesData(result.id);
+        setProposals(result);
+        setLoadingFetch(false);
+      }
     } catch (err) {
       console.log(err);
     }
   };
 
   useEffect(() => {
-    fetchVotesData();
     fetchDetailProposal();
   }, []);
 
@@ -79,6 +81,7 @@ export default function PageDetailDao() {
 
           <DetailVote
             show={false}
+            executed={proposals?.executed}
             id={proposals?.id}
             result={proposals}
             refetch={fetchDetailProposal}
@@ -87,20 +90,23 @@ export default function PageDetailDao() {
         </SheetContent>
       </Sheet>
 
-      <section className="py-28">
-        <div className="container mx-auto">
-          <div className="block w-full grid-cols-12 gap-x-10 sm:grid">
-            <DetailProposal result={proposals} votesData={votesData} />
-            <DetailVote
-              show
-              id={proposals?.id}
-              result={proposals}
-              refetch={fetchDetailProposal}
-              refetchVotes={fetchVotesData}
-            />
+      <Wrapper>
+        <div className="mt-32">
+          <div className="container mx-auto">
+            <div className="block w-full grid-cols-12 gap-x-10 sm:grid">
+              <DetailProposal result={proposals} votesData={votesData} />
+              <DetailVote
+                show
+                executed={proposals?.executed}
+                id={proposals?.id}
+                result={proposals}
+                refetch={fetchDetailProposal}
+                refetchVotes={fetchVotesData}
+              />
+            </div>
           </div>
         </div>
-      </section>
+      </Wrapper>
     </Fragment>
   );
 }
