@@ -100,38 +100,37 @@ const NavigationPublic: React.FC = () => {
       isLock: false,
       href: "/chat-ai",
       description:
-        "Berinteraksi secara real-time dengan AI untuk mendapatkan jawaban dan bantuan instan.",
+        "Interact in real-time with AI to get instant answers and assistance.",
     },
     {
       title: "Video Generator",
       isLock: true,
       href: "#",
-      description: "Buat video otomatis dari teks atau gambar dengan AI.",
+      description: "Automatically create videos from text or images using AI.",
     },
     {
       title: "Image Generator",
       isLock: true,
       href: "#",
-      description: "Hasilkan gambar AI berkualitas tinggi dari deskripsi Anda.",
+      description: "Generate high-quality AI images from your description.",
     },
     {
       title: "Face Editor",
       isLock: true,
       href: "#",
-      description: "Edit wajah dalam foto dengan fitur retouching otomatis.",
+      description: "Edit faces in photos with automatic retouching features.",
     },
     {
       title: "Audio Generator",
       isLock: true,
       href: "#",
-      description: "Ciptakan suara atau musik AI dengan cepat dan mudah.",
+      description: "Quickly and easily create AI-generated sounds or music.",
     },
     {
       title: "Many More",
       isLock: false,
       href: "/#timeline",
-      description:
-        "Nikmati lebih banyak fitur menarik untuk kebutuhan digital Anda.",
+      description: "Enjoy many more exciting features for your digital needs.",
     },
   ];
 
@@ -194,12 +193,12 @@ const NavigationPublic: React.FC = () => {
                 </NavigationMenuItem>
                 <NavigationMenuItem>
                   <Link
-                    target="_blank"
                     href="https://garrulous-coyote-265.notion.site/Arcalis-Documentation-1996834eb34880238e47cca691c1ed90"
                     legacyBehavior
                     passHref
                   >
                     <NavigationMenuLink
+                      target="_blank"
                       className={cn(
                         navigationMenuTriggerStyle(),
                         "text-md bg-transparent",
@@ -216,6 +215,7 @@ const NavigationPublic: React.FC = () => {
                     passHref
                   >
                     <NavigationMenuLink
+                      target="_blank"
                       className={cn(
                         navigationMenuTriggerStyle(),
                         "text-md bg-transparent",

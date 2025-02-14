@@ -55,7 +55,7 @@ const About = () => {
             <p>
               From startups to enterprises, educators to investors, Arcalis
               provides tailored AI solutions that adapt to your needs. Built on
-              Manta Network’s zero-knowledge proofs (ZKPs), we guarantee
+              Manta Network’s zero-knowledge proofs (ZKPs), we guarantee{" "}
               <span className="font-bold">enterprise-grade security</span>,{" "}
               <span className="font-bold">energy efficiency</span>, and
               <span className="font-bold">cross-chain interoperability</span>,

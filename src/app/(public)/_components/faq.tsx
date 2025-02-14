@@ -12,7 +12,7 @@ import React from "react";
 
 const FAQ = () => {
   return (
-    <div className="mt-40 grid grid-cols-1 gap-16 lg:grid-cols-2">
+    <div className="grid grid-cols-1 gap-16 lg:grid-cols-2">
       <div className="flex flex-col">
         <p className="lg:text-md text-sm">FAQ</p>
         <div className="mt-2">
