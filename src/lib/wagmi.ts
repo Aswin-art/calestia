@@ -1,7 +1,11 @@
 import { getDefaultConfig } from "@rainbow-me/rainbowkit";
 import { mantaTestnet as originalMantaTestnetWagmi } from "wagmi/chains";
-import { createPublicClient, http } from "viem";
-import { mantaTestnet as originalMantaTestnetViem } from "viem/chains";
+import {
+  createPublicClient,
+  createWalletClient,
+  defineChain,
+  http,
+} from "viem";
 
 const customMantaTestnetWagmi = {
   ...originalMantaTestnetWagmi,
@@ -13,15 +17,17 @@ const customMantaTestnetWagmi = {
   },
 };
 
-const customMantaTestnetViem = {
-  ...originalMantaTestnetViem,
+const mantaSepolia = defineChain({
   id: 3441006,
-  nativeCurrency: {
-    name: "Ether",
-    symbol: "ETH",
-    decimals: 18,
+  name: "Manta Pacific Sepolia",
+  network: "manta-sepolia",
+  nativeCurrency: { name: "ETH", symbol: "ETH", decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: [process.env.NEXT_PUBLIC_RPC_URL!],
+    },
   },
-};
+});
 
 export const config = getDefaultConfig({
   appName: "Arcalis",
@@ -36,8 +42,11 @@ export const config = getDefaultConfig({
 });
 
 export const publicClient = createPublicClient({
-  chain: customMantaTestnetViem,
-  transport: http(
-    "https://endpoints.omniatech.io/v1/manta-pacific/sepolia/public",
-  ),
+  chain: mantaSepolia,
+  transport: http(),
+});
+
+export const walletClient = createWalletClient({
+  chain: mantaSepolia,
+  transport: http(),
 });

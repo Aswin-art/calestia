@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
-import { Fragment } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { DetailProposal } from "@/app/(public)/dao/[id]/_components/detail-proposal";
 import { Button } from "@/components/ui/button";
 import { ChartPie, Loader2 } from "lucide-react";
@@ -12,28 +12,54 @@ import {
 } from "@/components/ui/sheet";
 import DetailVote from "@/app/(public)/dao/[id]/_components/detail-vote";
 import { useParams } from "next/navigation";
-import { useReadContract } from "wagmi";
 import config from "@/lib/config";
+import { publicClient } from "@/lib/wagmi";
 
 export default function PageDetailDao() {
+  const [loadingFetch, setLoadingFetch] = useState(true);
+  const [proposals, setProposals] = useState<any>([]);
+  const [votesData, setVotesData] = useState<any>([]);
+
   const params = useParams();
-  const { data, isLoading, refetch } = useReadContract({
-    abi: config.abi,
-    address: config.address as `0x${string}`,
-    functionName: "getProposalByDbId",
-    args: [params.id],
-  });
 
-  const result: any = data;
+  const fetchDetailProposal = async () => {
+    try {
+      const result: any = await publicClient.readContract({
+        address: config.address as `0x${string}`,
+        abi: config.abi,
+        functionName: "getProposalByDbId",
+        args: [params.id],
+      });
 
-  const { data: votesData, refetch: refetchVotesData } = useReadContract({
-    abi: config.abi,
-    address: config.address as `0x${string}`,
-    functionName: "getVoterDetails",
-    args: [result?.id],
-  });
+      setProposals(result);
+      setLoadingFetch(false);
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
-  return isLoading ? (
+  const fetchVotesData = async () => {
+    try {
+      const result: any = await publicClient.readContract({
+        abi: config.abi,
+        address: config.address as `0x${string}`,
+        functionName: "getVoterDetails",
+        args: [proposals?.id],
+      });
+
+      setVotesData(result);
+      setLoadingFetch(false);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  useEffect(() => {
+    fetchVotesData();
+    fetchDetailProposal();
+  }, []);
+
+  return loadingFetch ? (
     <div className="flex h-[300px] items-center justify-center">
       <Loader2 className="animate-spin" />
     </div>
@@ -53,10 +79,10 @@ export default function PageDetailDao() {
 
           <DetailVote
             show={false}
-            id={result.id}
-            result={result}
-            refetch={refetch}
-            refetchVotes={refetchVotesData}
+            id={proposals?.id}
+            result={proposals}
+            refetch={fetchDetailProposal}
+            refetchVotes={fetchVotesData}
           />
         </SheetContent>
       </Sheet>
@@ -64,13 +90,13 @@ export default function PageDetailDao() {
       <section className="py-28">
         <div className="container mx-auto">
           <div className="block w-full grid-cols-12 gap-x-10 sm:grid">
-            <DetailProposal result={result} votesData={votesData} />
+            <DetailProposal result={proposals} votesData={votesData} />
             <DetailVote
               show
-              id={result.id}
-              result={result}
-              refetch={refetch}
-              refetchVotes={refetchVotesData}
+              id={proposals?.id}
+              result={proposals}
+              refetch={fetchDetailProposal}
+              refetchVotes={fetchVotesData}
             />
           </div>
         </div>

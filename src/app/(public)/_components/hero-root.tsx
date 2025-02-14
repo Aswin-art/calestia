@@ -26,7 +26,7 @@ const HeroRoot: React.FC = () => {
       </h1>
 
       <div className="animate-glow animate-fade-right hidden h-px w-screen bg-linear-to-r from-zinc-300/0 via-zinc-300/50 to-zinc-300/0 md:block" />
-      <div className="animate-fade-in space-y-2 text-center">
+      <div className="animate-title space-y-2 text-center">
         <h2 className="text-sm text-zinc-500 sm:text-lg md:text-xl">
           Switch Models Like Chains - The Multi-AI Ecosystem.
         </h2>

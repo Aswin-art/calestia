@@ -4,7 +4,7 @@ import HeroRoot from "./_components/hero-root";
 import { TimelineArcalis } from "./_components/timeline";
 import PricingPlan from "./feature/_components/pricing-plan";
 import FAQ from "./_components/faq";
-import { CTASection } from "./_components/newsletter";
+import { NewsLetter } from "./_components/newsletter";
 
 export default function RootPage() {
   return (
@@ -15,7 +15,7 @@ export default function RootPage() {
         <TimelineArcalis />
         <PricingPlan />
         <FAQ />
-        <CTASection />
+        <NewsLetter />
       </Wrapper>
     </main>
   );

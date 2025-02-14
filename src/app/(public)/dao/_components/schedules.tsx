@@ -26,14 +26,15 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Textarea } from "@/components/ui/textarea";
-import { useAccount, useReadContract, useWriteContract } from "wagmi";
+import { useAccount, useWriteContract } from "wagmi";
 import config from "@/lib/config";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Loader2 } from "lucide-react";
 import Link from "next/link";
 import { publicClient } from "@/lib/wagmi";
 import { toast } from "sonner";
 import cuid from "cuid";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const formSchema = z.object({
   title: z.string().min(2, {
@@ -56,7 +57,13 @@ const formSchemaEmergency = z.object({
   }),
 });
 
+type ProposalsState = {
+  emergencies: any[];
+  generals: any[];
+};
+
 const coOwnerWallet = process.env.NEXT_PUBLIC_CO_OWNER_WALLET_ADDRESS;
+const ownerWallet = process.env.NEXT_PUBLIC_OWNER_WALLET_ADDRESS;
 
 export const Schedule: React.FC = () => {
   const { address } = useAccount();
@@ -64,6 +71,11 @@ export const Schedule: React.FC = () => {
 
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
+  const [loadingFetch, setLoadingFetch] = useState(true);
+  const [proposals, setProposals] = useState<ProposalsState>({
+    emergencies: [],
+    generals: [],
+  });
   const [openEmergency, setOpenEmergency] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -83,13 +95,38 @@ export const Schedule: React.FC = () => {
     },
   });
 
-  const { data, isLoading, refetch } = useReadContract({
-    abi: config.abi,
-    address: config.address as `0x${string}`,
-    functionName: "getAllProposals",
-  });
-
   const isCoOwners = address === coOwnerWallet;
+  const isOwners = address === ownerWallet;
+
+  const fetchAllProposal = async () => {
+    try {
+      const result: any = await publicClient.readContract({
+        address: config.address as `0x${string}`,
+        abi: config.abi,
+        functionName: "getAllProposals",
+      });
+
+      const emergencyProposals: any[] = [];
+      const normalProposals: any[] = [];
+
+      result.forEach((proposal: any) => {
+        const creator = proposal.creator;
+        if (creator === coOwnerWallet || creator === ownerWallet) {
+          emergencyProposals.push(proposal);
+        } else {
+          normalProposals.push(proposal);
+        }
+      });
+
+      setProposals({
+        emergencies: emergencyProposals,
+        generals: normalProposals,
+      });
+      setLoadingFetch(false);
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     if (!address)
@@ -118,7 +155,7 @@ export const Schedule: React.FC = () => {
             });
 
             if (result.status === "success") {
-              refetch();
+              fetchAllProposal();
               setLoading(false);
               setOpen(false);
               toast("Success!", {
@@ -179,7 +216,7 @@ export const Schedule: React.FC = () => {
             });
 
             if (result.status === "success") {
-              refetch();
+              fetchAllProposal();
               setLoading(false);
               setOpenEmergency(false);
               toast("Success!", {
@@ -210,6 +247,10 @@ export const Schedule: React.FC = () => {
       },
     );
   }
+
+  useEffect(() => {
+    fetchAllProposal();
+  }, []);
 
   return (
     <section
@@ -320,7 +361,7 @@ export const Schedule: React.FC = () => {
                     </Form>
                   </DialogContent>
                 </Dialog>
-                {isCoOwners && (
+                {(isCoOwners || isOwners) && (
                   <Dialog open={openEmergency}>
                     <button
                       disabled={loading}
@@ -434,24 +475,55 @@ export const Schedule: React.FC = () => {
             )}
           </div>
         </div>
-        {isLoading && (
+        {loadingFetch && (
           <div className="mt-20 flex items-center justify-center">
             <Loader2 className="animate-spin" />
           </div>
         )}
-        <div className="mt-8 grid grid-cols-[repeat(auto-fill,_minmax(300px,_1fr))] gap-4 lg:mt-14">
-          {Array.isArray(data) &&
-            data.map((proposal: any) => (
-              <Link href={`/dao/${proposal.dbId}`} key={proposal.dbId}>
-                <DaoProposal
-                  title={proposal.title}
-                  description={proposal.description}
-                  creator={proposal.creator}
-                  executed={proposal.executed}
-                />
-              </Link>
-            ))}
-        </div>
+        <Tabs defaultValue="general" className="mx-auto mt-10">
+          <TabsList>
+            <TabsTrigger value="general">General</TabsTrigger>
+            <TabsTrigger value="emergency">Emergency</TabsTrigger>
+          </TabsList>
+          <TabsContent value="general">
+            <div className="mt-8 grid grid-cols-[repeat(auto-fill,_minmax(300px,_1fr))] gap-4 lg:mt-14">
+              {proposals.generals.length > 0 ? (
+                Array.isArray(proposals.generals) &&
+                proposals.generals.map((proposal: any) => (
+                  <Link href={`/dao/${proposal.dbId}`} key={proposal.dbId}>
+                    <DaoProposal
+                      title={proposal.title}
+                      description={proposal.description}
+                      creator={proposal.creator}
+                      executed={proposal.executed}
+                    />
+                  </Link>
+                ))
+              ) : (
+                <p>There is no active proposals.</p>
+              )}
+            </div>
+          </TabsContent>
+          <TabsContent value="emergency">
+            <div className="mt-8 grid grid-cols-[repeat(auto-fill,_minmax(300px,_1fr))] gap-4 lg:mt-14">
+              {proposals.emergencies.length > 0 ? (
+                Array.isArray(proposals.emergencies) &&
+                proposals.emergencies.map((proposal: any) => (
+                  <Link href={`/dao/${proposal.dbId}`} key={proposal.dbId}>
+                    <DaoProposal
+                      title={proposal.title}
+                      description={proposal.description}
+                      creator={proposal.creator}
+                      executed={proposal.executed}
+                    />
+                  </Link>
+                ))
+              ) : (
+                <p>There is no active proposals.</p>
+              )}
+            </div>
+          </TabsContent>
+        </Tabs>
       </div>
     </section>
   );

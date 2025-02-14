@@ -33,7 +33,7 @@ export const Timeline = ({ data }: { data: TimelineEntry[] }) => {
       ref={containerRef}
     >
       <div className="mx-auto max-w-7xl px-4 md:px-8 lg:px-10">
-        <h2 className="max-w-4xl text-xl text-black md:text-8xl dark:text-white">
+        <h2 className="max-w-4xl text-2xl text-black lg:text-7xl dark:text-white">
           Roadmap
         </h2>
       </div>
@@ -48,13 +48,13 @@ export const Timeline = ({ data }: { data: TimelineEntry[] }) => {
               <div className="absolute left-3 flex h-10 w-10 items-center justify-center rounded-full bg-white md:left-3 dark:bg-black">
                 <div className="h-4 w-4 rounded-full border border-neutral-300 bg-neutral-200 p-2 dark:border-neutral-700 dark:bg-neutral-800" />
               </div>
-              <h3 className="hidden text-xl font-bold text-neutral-500 md:block md:pl-20 md:text-5xl dark:text-neutral-500">
+              <h3 className="text-md hidden font-bold text-neutral-500 md:block md:pl-20 md:text-5xl lg:text-xl dark:text-neutral-500">
                 {item.title}
               </h3>
             </div>
 
             <div className="relative w-full pr-4 pl-20 md:pl-4">
-              <h3 className="mb-4 block text-left text-2xl font-bold text-neutral-500 md:hidden dark:text-neutral-500">
+              <h3 className="mb-4 block text-left text-xl font-bold text-neutral-500 md:hidden lg:text-2xl dark:text-neutral-500">
                 {item.title}
               </h3>
               {item.content}{" "}

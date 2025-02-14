@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 
-export function CTASection() {
+export function NewsLetter() {
   return (
     <section className={cn("overflow-hidden pt-0 md:pt-0")}>
       <div className="relative mx-auto mt-40 mb-10 flex flex-col items-center gap-6 px-8 py-12 text-center sm:gap-8 md:py-24">

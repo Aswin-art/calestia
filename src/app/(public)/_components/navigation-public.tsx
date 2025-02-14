@@ -105,25 +105,25 @@ const NavigationPublic: React.FC = () => {
     {
       title: "Video Generator",
       isLock: true,
-      href: "/docs/primitives/hover-card",
+      href: "#",
       description: "Buat video otomatis dari teks atau gambar dengan AI.",
     },
     {
       title: "Image Generator",
       isLock: true,
-      href: "/docs/primitives/progress",
+      href: "#",
       description: "Hasilkan gambar AI berkualitas tinggi dari deskripsi Anda.",
     },
     {
       title: "Face Editor",
       isLock: true,
-      href: "/docs/primitives/scroll-area",
+      href: "#",
       description: "Edit wajah dalam foto dengan fitur retouching otomatis.",
     },
     {
       title: "Audio Generator",
       isLock: true,
-      href: "/docs/primitives/tabs",
+      href: "#",
       description: "Ciptakan suara atau musik AI dengan cepat dan mudah.",
     },
     {
@@ -367,23 +367,27 @@ interface ListItemProps extends React.ComponentPropsWithoutRef<"a"> {
   isLock?: boolean;
 }
 
-const ListItem = React.forwardRef<React.ElementRef<"a">, ListItemProps>(
-  ({ className, title, children, isLock, onClick, ...props }, ref) => {
-    const handleClick = (
-      e: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
-    ) => {
-      if (isLock) {
-        e.preventDefault();
-        return;
-      }
-      if (onClick) onClick(e);
-    };
+const ListItem = ({
+  className,
+  title,
+  children,
+  isLock,
+  onClick,
+  href = "#",
+  ...props
+}: ListItemProps) => {
+  const handleClick = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
+    if (isLock) {
+      e.preventDefault();
+      return;
+    }
+    if (onClick) onClick(e);
+  };
 
+  if (href === "#") {
     return (
       <li>
-        <a
-          ref={ref}
-          onClick={handleClick}
+        <div
           className={cn(
             "relative block space-y-1 rounded-md p-3 leading-none no-underline transition-colors outline-none select-none",
             !isLock &&
@@ -391,7 +395,6 @@ const ListItem = React.forwardRef<React.ElementRef<"a">, ListItemProps>(
             isLock && "cursor-not-allowed",
             className,
           )}
-          {...props}
         >
           {isLock && (
             <div className="pointer-events-none absolute inset-0 flex items-center justify-center gap-2 bg-black/60 transition-colors">
@@ -402,9 +405,35 @@ const ListItem = React.forwardRef<React.ElementRef<"a">, ListItemProps>(
           <p className="text-muted-foreground line-clamp-2 text-sm leading-snug">
             {children}
           </p>
-        </a>
+        </div>
       </li>
     );
-  },
-);
-ListItem.displayName = "ListItem";
+  }
+
+  return (
+    <li>
+      <Link
+        href={href as string}
+        onClick={handleClick}
+        className={cn(
+          "relative block space-y-1 rounded-md p-3 leading-none no-underline transition-colors outline-none select-none",
+          !isLock &&
+            "hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
+          isLock && "cursor-not-allowed",
+          className,
+        )}
+        {...props}
+      >
+        {isLock && (
+          <div className="pointer-events-none absolute inset-0 flex items-center justify-center gap-2 bg-black/60 transition-colors">
+            <Lock className="h-6 w-6 text-white" /> Coming Soon
+          </div>
+        )}
+        <div className="text-sm leading-none font-medium">{title}</div>
+        <p className="text-muted-foreground line-clamp-2 text-sm leading-snug">
+          {children}
+        </p>
+      </Link>
+    </li>
+  );
+};
