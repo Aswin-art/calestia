@@ -5,9 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { WagmiProvider } from "wagmi";
 import { darkTheme, RainbowKitProvider } from "@rainbow-me/rainbowkit";
 import { config } from "@/lib/wagmi";
-
 import { ThemeProvider } from "@/components/theme-provider";
-import ReactLenis from "lenis/react";
 import Particles from "@/components/particles";
 
 const queryClient = new QueryClient();
@@ -23,19 +21,12 @@ export function Providers({ children }: { children: React.ReactNode }) {
             enableSystem
             disableTransitionOnChange
           >
-            <ReactLenis
-              root
-              options={{
-                lerp: 0.05,
-              }}
-            >
-              <Particles
-                className="animate-fade-in fixed inset-0 -z-10"
-                quantity={100}
-              />
+            <Particles
+              className="animate-fade-in fixed inset-0 -z-10"
+              quantity={100}
+            />
 
-              {children}
-            </ReactLenis>
+            {children}
           </ThemeProvider>
         </RainbowKitProvider>
       </QueryClientProvider>

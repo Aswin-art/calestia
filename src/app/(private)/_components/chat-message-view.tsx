@@ -4,61 +4,66 @@ import { useState, FormEvent } from "react";
 import { Paperclip, Mic, SendHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ChatMessageList } from "@/components/ui/chat-message-list";
+import type { TChatMessage, TUserContent } from "@/types/index.type";
 import {
   ChatBubble,
   ChatBubbleAvatar,
   ChatBubbleMessage,
 } from "@/app/(private)/_components/chat-bubble";
 import { TextAreatAutoGrowing } from "@/components/ui/text-area-autogrowing";
+import { useRouter } from "next/navigation";
 
-export function ChatMessageView() {
-  const [messages, setMessages] = useState([
-    {
-      id: 1,
-      content: "Hello! How can I help you today?",
-      sender: "ai",
-    },
-    {
-      id: 2,
-      content: "I have a question about the component library.",
-      sender: "user",
-    },
-    {
-      id: 3,
-      content: "Sure! I'd be happy to help. What would you like to know?",
-      sender: "ai",
-    },
-  ]);
+export function ChatMessageView({
+  historyChat,
+  conversationId,
+}: {
+  historyChat: TChatMessage[];
+  conversationId: string;
+}) {
+  const userId = "user123";
+  const router = useRouter();
 
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
+    setIsLoading(true);
     e.preventDefault();
     if (!input.trim()) return;
 
-    setMessages((prev) => [
-      ...prev,
-      {
-        id: prev.length + 1,
-        content: input,
-        sender: "user",
-      },
-    ]);
-    setInput("");
-    setIsLoading(true);
-
-    setTimeout(() => {
-      setMessages((prev) => [
-        ...prev,
+    try {
+      const req = await fetch(
+        `${process.env.NEXT_PUBLIC_REDIS_BE}?userId=${userId}&conversationId=${conversationId}`,
         {
-          id: prev.length + 1,
-          content: "This is an AI response to your message.",
-          sender: "ai",
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            model: "deepseek/deepseek-r1:free",
+            messages: [
+              {
+                role: "user",
+                content: [
+                  {
+                    type: "text",
+                    text: input,
+                  },
+                ],
+              },
+            ],
+          }),
         },
-      ]);
+      );
+
+      await req.json();
+      setInput("");
+      router.refresh();
+    } catch (error) {
+      console.log(error);
+    } finally {
       setIsLoading(false);
-    }, 1000);
+    }
   };
 
   const handleAttachFile = () => {
@@ -73,40 +78,62 @@ export function ChatMessageView() {
     <>
       <div className="relative flex h-full flex-col justify-between">
         <div className="">
-          <ChatMessageList>
-            {messages.map((message) => (
-              <ChatBubble
-                key={message.id}
-                variant={message.sender === "user" ? "sent" : "received"}
-              >
-                <ChatBubbleAvatar
-                  className="h-8 w-8 shrink-0"
-                  src={
-                    message.sender === "user"
-                      ? "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=64&h=64&q=80&crop=faces&fit=crop"
-                      : "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=64&h=64&q=80&crop=faces&fit=crop"
-                  }
-                  fallback={message.sender === "user" ? "US" : "AI"}
-                />
-                <ChatBubbleMessage
-                  variant={message.sender === "user" ? "sent" : "received"}
-                >
-                  {message.content}
-                </ChatBubbleMessage>
-              </ChatBubble>
-            ))}
+          {historyChat.length > 0 ? (
+            <ChatMessageList>
+              {historyChat &&
+                historyChat.map(({ content, role }, idx) => (
+                  <ChatBubble
+                    variant={role === "user" ? "sent" : "received"}
+                    key={idx}
+                  >
+                    <ChatBubbleAvatar
+                      className="h-8 w-8 shrink-0"
+                      src={
+                        role === "user"
+                          ? "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=64&h=64&q=80&crop=faces&fit=crop"
+                          : "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=64&h=64&q=80&crop=faces&fit=crop"
+                      }
+                      fallback={role === "user" ? "US" : "AI"}
+                    />
 
-            {isLoading && (
-              <ChatBubble variant="received">
-                <ChatBubbleAvatar
-                  className="h-8 w-8 shrink-0"
-                  src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=64&h=64&q=80&crop=faces&fit=crop"
-                  fallback="AI"
-                />
-                <ChatBubbleMessage isLoading />
-              </ChatBubble>
-            )}
-          </ChatMessageList>
+                    <ChatBubbleMessage
+                      variant={role === "user" ? "sent" : "received"}
+                    >
+                      <article
+                        dangerouslySetInnerHTML={{
+                          __html:
+                            role === "user"
+                              ? (content as TUserContent[])[0].text
+                              : "",
+                        }}
+                      />
+
+                      <article
+                        dangerouslySetInnerHTML={{
+                          __html:
+                            role === "assistant" && content
+                              ? content.toString()
+                              : "",
+                        }}
+                      />
+                    </ChatBubbleMessage>
+                  </ChatBubble>
+                ))}
+
+              {isLoading && (
+                <ChatBubble variant="received">
+                  <ChatBubbleAvatar
+                    className="h-8 w-8 shrink-0"
+                    src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=64&h=64&q=80&crop=faces&fit=crop"
+                    fallback="AI"
+                  />
+                  <ChatBubbleMessage isLoading />
+                </ChatBubble>
+              )}
+            </ChatMessageList>
+          ) : (
+            <h2>TEXT</h2>
+          )}
         </div>
         <div className="sticky bottom-0 z-10 pb-10">
           <div className="h-10 w-full rounded-md bg-[linear-gradient(to_bottom,rgba(0,0,0,0)_0%,rgba(23,23,23,0.5)_60%)] before:absolute before:inset-x-0 before:bottom-0 before:-z-10 before:h-[50%] before:bg-neutral-900"></div>
