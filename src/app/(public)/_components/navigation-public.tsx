@@ -210,7 +210,7 @@ const NavigationPublic: React.FC = () => {
                 </NavigationMenuItem>
                 <NavigationMenuItem>
                   <Link
-                    href="https://drive.google.com/file/d/1U0V4Phvqj4NGSnarCfSS6iY7toTO8pw9/view?usp=sharing"
+                    href="https://docs.google.com/document/d/1shUkg63IJZS5qH2ZFoy7xywzYKmw0fZYTVnFCiES_XQ/edit?tab=t.0"
                     legacyBehavior
                     passHref
                   >

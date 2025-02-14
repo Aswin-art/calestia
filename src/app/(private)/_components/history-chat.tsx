@@ -3,7 +3,7 @@
 import { useSidebar } from "@/components/ui/sidebar";
 import { motion } from "framer-motion";
 import React from "react";
-import { AlignLeft, ChevronDown, Loader, Plus } from "lucide-react";
+import { ChevronDown, Loader, Plus } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { roomChatAI } from "../../../../actions/chat-ai";
 import Link from "next/link";
@@ -31,7 +31,7 @@ const HistoryChat: React.FC = () => {
       >
         <Plus className="size-6" />
 
-        <p>Create Chat</p>
+        <p>New Conversation</p>
       </Link>
 
       <div className="space-y-4">
@@ -45,7 +45,7 @@ const HistoryChat: React.FC = () => {
               className="flex items-center gap-x-4 truncate rounded-full px-4 py-2 font-semibold transition-all hover:border-[rgba(255,255,255,0.1)] hover:bg-[rgba(255,255,255,0.1)] hover:text-[rgba(255,255,255,0.8)] hover:backdrop-blur-[30px]"
             >
               {/* {title.toString()} */}
-              <AlignLeft className="w-10 md:w-14" />
+              {/* <AlignLeft className="w-10 md:w-14" /> */}
               <p className="truncate font-semibold">
                 {title ? title.toString() : ""}
               </p>

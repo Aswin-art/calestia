@@ -12,6 +12,7 @@ import {
 } from "@/app/(private)/_components/chat-bubble";
 import { TextAreatAutoGrowing } from "@/components/ui/text-area-autogrowing";
 import { useRouter } from "next/navigation";
+import ReactMarkdown from "react-markdown";
 
 export function ChatMessageView({
   historyChat,
@@ -30,6 +31,10 @@ export function ChatMessageView({
     setIsLoading(true);
     e.preventDefault();
     if (!input.trim()) return;
+
+    if (historyChat.length === 0) {
+      router.push(`/chat-ai/${conversationId}`);
+    }
 
     try {
       const req = await fetch(
@@ -96,27 +101,25 @@ export function ChatMessageView({
                       fallback={role === "user" ? "US" : "AI"}
                     />
 
-                    <ChatBubbleMessage
-                      variant={role === "user" ? "sent" : "received"}
-                    >
-                      <article
-                        dangerouslySetInnerHTML={{
-                          __html:
-                            role === "user"
-                              ? (content as TUserContent[])[0].text
-                              : "",
-                        }}
-                      />
+                    {role === "user" && (
+                      <ChatBubbleMessage variant={"sent"}>
+                        {role === "user"
+                          ? (content as TUserContent[])[0].text
+                          : ""}
+                      </ChatBubbleMessage>
+                    )}
 
-                      <article
-                        dangerouslySetInnerHTML={{
-                          __html:
-                            role === "assistant" && content
+                    {role === "assistant" && (
+                      <ChatBubbleMessage variant={"received"}>
+                        <article className="pros">
+                          <ReactMarkdown>
+                            {role === "assistant" && content
                               ? content.toString()
-                              : "",
-                        }}
-                      />
-                    </ChatBubbleMessage>
+                              : ""}
+                          </ReactMarkdown>
+                        </article>
+                      </ChatBubbleMessage>
+                    )}
                   </ChatBubble>
                 ))}
 
@@ -132,7 +135,9 @@ export function ChatMessageView({
               )}
             </ChatMessageList>
           ) : (
-            <h2>TEXT</h2>
+            <h2 className="from-primary to-danger bg-gradient-to-r bg-clip-text text-3xl font-semibold text-transparent">
+              Welcome, how can i help you today?
+            </h2>
           )}
         </div>
         <div className="sticky bottom-0 z-10 pb-10">

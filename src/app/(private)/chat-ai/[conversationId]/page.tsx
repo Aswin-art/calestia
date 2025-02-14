@@ -8,11 +8,8 @@ const PageChatAiConversation: React.FC<{
   const conversationId = (await params).conversationId;
   const chat = await historyChatAI("user123", conversationId);
 
-  console.log(chat);
-
   return (
     <Fragment>
-      {" "}
       <ChatMessageView historyChat={chat} conversationId={conversationId} />
     </Fragment>
   );
