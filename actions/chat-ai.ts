@@ -53,7 +53,11 @@ export const roomChatAI = async (userId: string) => {
         }),
       );
 
-      return datas; // Mengembalikan semua percakapan dengan pesan masing-masing
+      // Urutkan data berdasarkan roomId secara descending
+      const sortedDatas = datas.sort(
+        (a, b) => Number(b.roomId) - Number(a.roomId),
+      );
+      return sortedDatas;
     }
 
     return []; // Jika tidak ada percakapan, kembalikan array kosong

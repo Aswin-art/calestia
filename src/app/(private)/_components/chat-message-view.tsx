@@ -1,71 +1,146 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { useState, FormEvent } from "react";
-import { Paperclip, Mic, SendHorizontal } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { ChatMessageList } from "@/components/ui/chat-message-list";
-import type { TChatMessage, TUserContent } from "@/types/index.type";
-import {
-  ChatBubble,
-  ChatBubbleAvatar,
-  ChatBubbleMessage,
-} from "@/app/(private)/_components/chat-bubble";
-import { TextAreatAutoGrowing } from "@/components/ui/text-area-autogrowing";
+import { useState, useRef, useEffect, FormEvent } from "react";
 import { useRouter } from "next/navigation";
+import { motion, AnimatePresence } from "framer-motion";
+import { RedisMessage } from "@/lib/redis";
 import ReactMarkdown from "react-markdown";
+import { Mic, Paperclip, SendHorizontal } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { TextAreatAutoGrowing } from "@/components/ui/text-area-autogrowing";
+import { ChatMessageList } from "@/components/ui/chat-message-list";
+import { ChatBubble, ChatBubbleMessage } from "./chat-bubble";
 
-export function ChatMessageView({
-  historyChat,
+interface ChatMessageViewProps {
+  initialMessages: RedisMessage[];
+  conversationId?: string;
+}
+
+export default function ChatMessageView({
+  initialMessages,
   conversationId,
-}: {
-  historyChat: TChatMessage[];
-  conversationId: string;
-}) {
-  const userId = "user123";
+}: ChatMessageViewProps) {
   const router = useRouter();
-
+  const [messages, setMessages] = useState<RedisMessage[]>(initialMessages);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const loadingVariants = {
+    initial: { opacity: 0 },
+    animate: { opacity: 1 },
+    exit: { opacity: 0 },
+  };
+
+  // Scroll otomatis ke bawah setiap kali pesan diperbarui
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
+  // Fungsionalitas pembuatan sesi baru atau pembaruan sesi
+  const createOrUpdateSession = async (newSessionId: string) => {
+    try {
+      if (!conversationId) {
+        router.replace(`/chat-ai/${newSessionId}`);
+        return newSessionId;
+      }
+      return conversationId;
+    } catch (error) {
+      throw error;
+    }
+  };
 
   const handleSubmit = async (e: FormEvent) => {
-    setIsLoading(true);
     e.preventDefault();
-    if (!input.trim()) return;
+    if (!input.trim() || isLoading) return;
 
-    if (historyChat.length === 0) {
-      router.push(`/chat-ai/${conversationId}`);
-    }
+    setIsLoading(true);
+    const userInput = input;
+    setInput("");
+
+    // Gunakan conversationId yang sudah ada, atau generate baru jika belum ada
+    const finalConversationId = conversationId ?? Date.now().toString();
+
+    const userMessage: RedisMessage = { role: "user", content: userInput };
+    const tempAssistantMessage: RedisMessage = {
+      role: "assistant",
+      content: "",
+    };
+
+    // Update UI: tambahkan pesan user dan placeholder pesan assistant
+    setMessages((prev) => [...prev, userMessage, tempAssistantMessage]);
 
     try {
-      const req = await fetch(
-        `${process.env.NEXT_PUBLIC_REDIS_BE}?userId=${userId}&conversationId=${conversationId}`,
+      const streamMode = false;
+      // Mengirim request chat ke API dengan conversationId awal
+      const response = await fetch(
+        `/api/chat?conversationId=${finalConversationId}`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            "x-user-id": "user123",
+            "x-user-tier": "Explorer",
           },
           body: JSON.stringify({
             model: "deepseek/deepseek-chat",
-            messages: [
-              {
-                role: "user",
-                content: [
-                  {
-                    type: "text",
-                    text: input,
-                  },
-                ],
-              },
-            ],
+            messages: [{ role: "user", content: userInput }],
+            stream: streamMode,
           }),
         },
       );
 
-      await req.json();
-      setInput("");
-      router.refresh();
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("Error text:", errorText);
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      if (!response.body) throw new Error("Failed to get response body");
+
+      if (streamMode) {
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        let assistantContent = "";
+
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+
+          const chunk = decoder.decode(value);
+          assistantContent += chunk;
+
+          setMessages((prev) => {
+            const newMessages = [...prev];
+            const lastMessage = newMessages[newMessages.length - 1];
+            if (lastMessage.role === "assistant") {
+              lastMessage.content = assistantContent;
+            }
+            return newMessages;
+          });
+        }
+      } else {
+        const data = await response.json();
+        const assistantContent = data.choices[0].message.content;
+
+        setMessages((prev) => {
+          const newMessages = [...prev].map((msg, index) => {
+            if (index === prev.length - 1 && msg.role === "assistant") {
+              return { ...msg, content: assistantContent };
+            }
+            return msg;
+          });
+          return newMessages;
+        });
+      }
+
+      // Panggil createOrUpdateSession setelah respons AI diterima dan diproses
+      await createOrUpdateSession(finalConversationId);
     } catch (error) {
-      console.log(error);
+      console.error("Chat error:", error);
+      // Rollback update UI jika terjadi error
+      setMessages((prev) => prev.slice(0, -2));
     } finally {
       setIsLoading(false);
     }
@@ -79,111 +154,148 @@ export function ChatMessageView({
     //
   };
 
+  // Komponen animasi loading
+  const LoadingBubble = () => (
+    <motion.div
+      initial="initial"
+      animate="animate"
+      exit="exit"
+      variants={loadingVariants}
+      className="flex items-center gap-2 rounded-lg bg-gray-100 p-4 dark:bg-gray-800"
+    >
+      <motion.div
+        animate={{ opacity: [0.5, 1, 0.5] }}
+        transition={{ repeat: Infinity, duration: 1.5 }}
+        className="h-2 w-2 rounded-full bg-gray-500"
+      />
+      <motion.div
+        animate={{ opacity: [0.5, 1, 0.5] }}
+        transition={{ repeat: Infinity, duration: 1.5, delay: 0.2 }}
+        className="h-2 w-2 rounded-full bg-gray-500"
+      />
+      <motion.div
+        animate={{ opacity: [0.5, 1, 0.5] }}
+        transition={{ repeat: Infinity, duration: 1.5, delay: 0.4 }}
+        className="h-2 w-2 rounded-full bg-gray-500"
+      />
+    </motion.div>
+  );
+
   return (
-    <>
-      <div className="relative flex h-full flex-col justify-between">
-        <div className="">
-          {historyChat.length > 0 ? (
-            <ChatMessageList>
-              {historyChat &&
-                historyChat.map(({ content, role }, idx) => (
-                  <ChatBubble
-                    variant={role === "user" ? "sent" : "received"}
-                    key={idx}
-                  >
-                    <ChatBubbleAvatar
-                      className="h-8 w-8 shrink-0"
-                      src={
-                        role === "user"
-                          ? "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=64&h=64&q=80&crop=faces&fit=crop"
-                          : "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=64&h=64&q=80&crop=faces&fit=crop"
-                      }
-                      fallback={role === "user" ? "US" : "AI"}
-                    />
-
-                    {role === "user" && (
-                      <ChatBubbleMessage variant={"sent"}>
-                        {role === "user"
-                          ? (content as TUserContent[])[0].text
-                          : ""}
-                      </ChatBubbleMessage>
-                    )}
-
-                    {role === "assistant" && (
-                      <ChatBubbleMessage variant={"received"}>
-                        <article className="pros">
-                          <ReactMarkdown>
-                            {role === "assistant" && content
-                              ? content.toString()
-                              : ""}
-                          </ReactMarkdown>
-                        </article>
-                      </ChatBubbleMessage>
-                    )}
-                  </ChatBubble>
-                ))}
-
-              {isLoading && (
-                <ChatBubble variant="received">
-                  <ChatBubbleAvatar
-                    className="h-8 w-8 shrink-0"
-                    src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=64&h=64&q=80&crop=faces&fit=crop"
-                    fallback="AI"
-                  />
-                  <ChatBubbleMessage isLoading />
-                </ChatBubble>
-              )}
-            </ChatMessageList>
-          ) : (
-            <h2 className="from-primary to-danger bg-gradient-to-r bg-clip-text text-3xl font-semibold text-transparent">
-              Welcome, how can i help you today?
-            </h2>
-          )}
-        </div>
-        <div className="sticky bottom-0 z-10 pb-10">
-          <div className="h-10 w-full rounded-md bg-[linear-gradient(to_bottom,rgba(0,0,0,0)_0%,rgba(23,23,23,0.5)_60%)] before:absolute before:inset-x-0 before:bottom-0 before:-z-10 before:h-[50%] before:bg-neutral-900"></div>
-
-          <form
-            onSubmit={handleSubmit}
-            className="w-full space-y-2.5 rounded-lg border border-neutral-600 bg-neutral-900 p-1 focus:outline-0"
+    <div className="relative mx-auto flex h-full max-w-3xl flex-col">
+      <div className="flex-1 space-y-4 p-4">
+        {messages.length === 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="py-12"
           >
-            <TextAreatAutoGrowing
-              setText={setInput}
-              value={input}
-              placeholder="Type your message..."
-              className="max-h-32 overflow-y-auto border-none bg-neutral-900 p-3 focus:ring-0 md:max-h-40 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300 dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 dark:[&::-webkit-scrollbar-track]:bg-neutral-700"
-            />
+            <h2 className="from-primary to-danger bg-gradient-to-r bg-clip-text text-3xl font-semibold text-transparent">
+              Welcome, how can I help you today?
+            </h2>
+            <p className="text-gray-600 dark:text-gray-400">
+              Start a conversation by typing your message below.
+            </p>
+          </motion.div>
+        )}
 
-            <div className="flex items-center justify-between p-3 pt-0">
-              <div className="flex">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  type="button"
-                  onClick={handleAttachFile}
+        <AnimatePresence>
+          <motion.div
+            key="chatMessageList"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <ChatMessageList>
+              {messages.map((message, index) => (
+                <ChatBubble
+                  variant={message.role === "user" ? "sent" : "received"}
+                  key={index} // Pastikan key ini unik; jika memungkinkan gunakan ID unik dari data
                 >
-                  <Paperclip className="size-4" />
-                </Button>
+                  {message.role === "user" && (
+                    <ChatBubbleMessage variant="sent">
+                      {message.content}
+                    </ChatBubbleMessage>
+                  )}
 
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  type="button"
-                  onClick={handleMicrophoneClick}
-                >
-                  <Mic className="size-4" />
-                </Button>
-              </div>
-              <Button
-                type="submit"
-                className="size-14 cursor-pointer rounded-full border-0 border-solid border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.1)] text-[rgba(255,255,255,0.8)] uppercase no-underline backdrop-blur-[30px] hover:bg-[rgba(255,255,255,0.2)]"
-              >
-                <SendHorizontal size="25px" />
-              </Button>
-            </div>
-          </form>
-        </div>
+                  {message.role === "assistant" && (
+                    <ChatBubbleMessage variant="received">
+                      <article className="pros">
+                        <ReactMarkdown>
+                          {message.content ? message.content.toString() : ""}
+                        </ReactMarkdown>
+                      </article>
+                    </ChatBubbleMessage>
+                  )}
+                </ChatBubble>
+              ))}
+            </ChatMessageList>
+          </motion.div>
+
+          {isLoading && (
+            <motion.div
+              key="loading"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="flex justify-start"
+            >
+              <LoadingBubble />
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        <div ref={messagesEndRef} />
       </div>
-    </>
+
+      {/* Form dengan posisi sticky di bagian bawah */}
+      <form
+        onSubmit={handleSubmit}
+        className="sticky bottom-3 z-10 w-full space-y-2.5 rounded-lg border border-neutral-600 bg-neutral-900 p-1 focus:outline-0"
+      >
+        <TextAreatAutoGrowing
+          setText={setInput}
+          value={input}
+          placeholder="Type your message..."
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && !e.shiftKey) {
+              e.preventDefault();
+              handleSubmit(e as any);
+            }
+          }}
+          className="h-8 max-h-32 overflow-y-auto border-none bg-neutral-900 p-3 outline-none focus:ring-0 focus:outline-none md:max-h-40 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300 dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 dark:[&::-webkit-scrollbar-track]:bg-neutral-700"
+        />
+
+        <div className="flex items-center justify-between p-3 pt-0">
+          <div className="flex">
+            <Button
+              variant="ghost"
+              size="icon"
+              type="button"
+              onClick={handleAttachFile}
+            >
+              <Paperclip className="size-4" />
+            </Button>
+
+            <Button
+              variant="ghost"
+              size="icon"
+              type="button"
+              onClick={handleMicrophoneClick}
+            >
+              <Mic className="size-4" />
+            </Button>
+          </div>
+          <Button
+            type="submit"
+            className="size-14 cursor-pointer rounded-full border-0 border-solid border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.1)] text-[rgba(255,255,255,0.8)] uppercase no-underline backdrop-blur-[30px] hover:bg-[rgba(255,255,255,0.2)]"
+          >
+            <SendHorizontal size="25px" />
+          </Button>
+        </div>
+      </form>
+    </div>
   );
 }

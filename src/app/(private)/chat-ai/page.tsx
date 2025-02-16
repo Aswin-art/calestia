@@ -1,16 +1,20 @@
-import { Fragment } from "react";
-import { ChatMessageView } from "../_components/chat-message-view";
-import { historyChatAI } from "../../../../actions/chat-ai";
+import { Suspense } from "react";
+import { ErrorBoundary } from "next/dist/client/components/error-boundary";
+import { ErrorFallback } from "../_components/error-fallback";
+import { ChatLoadingSkeleton } from "../_components/chat-loading";
+import ChatMessageView from "../_components/chat-message-view";
 
-const PageChatAi: React.FC = async () => {
-  const conversationId = Date.now().toString();
+async function ChatContainer() {
+  return <ChatMessageView initialMessages={[]} />;
+}
 
-  const chat = await historyChatAI("user123", conversationId);
-
+const PageChatAi: React.FC = () => {
   return (
-    <Fragment>
-      <ChatMessageView historyChat={chat} conversationId={conversationId} />
-    </Fragment>
+    <ErrorBoundary errorComponent={ErrorFallback}>
+      <Suspense fallback={<ChatLoadingSkeleton />}>
+        <ChatContainer />
+      </Suspense>
+    </ErrorBoundary>
   );
 };
 
