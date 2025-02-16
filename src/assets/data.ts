@@ -10,7 +10,7 @@ export const SECTION_HEIGHT = 1500;
 export const TIER_CONFIG_MODEL = [
   {
     title: "Deepseek R1",
-    model: "deepseek/deepseek-r1:free",
+    model: "deepseek/deepseek-chat",
     description:
       "A basic chatbot offering essential functionality without customization or DAO integration.",
   },
