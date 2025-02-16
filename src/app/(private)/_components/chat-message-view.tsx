@@ -1,189 +1,231 @@
 "use client";
 
-import { useState, FormEvent } from "react";
-import { Paperclip, Mic, SendHorizontal } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { ChatMessageList } from "@/components/ui/chat-message-list";
-import type { TChatMessage, TUserContent } from "@/types/index.type";
-import {
-  ChatBubble,
-  ChatBubbleAvatar,
-  ChatBubbleMessage,
-} from "@/app/(private)/_components/chat-bubble";
-import { TextAreatAutoGrowing } from "@/components/ui/text-area-autogrowing";
+import { useState, useRef, useEffect, FormEvent } from "react";
 import { useRouter } from "next/navigation";
-import ReactMarkdown from "react-markdown";
+import { motion, AnimatePresence } from "framer-motion";
+import { redisClient, RedisMessage } from "@/lib/redis";
 
-export function ChatMessageView({
-  historyChat,
+interface ChatMessageViewProps {
+  initialMessages: RedisMessage[];
+  conversationId?: string;
+}
+
+export default function ChatMessageView({
+  initialMessages,
   conversationId,
-}: {
-  historyChat: TChatMessage[];
-  conversationId: string;
-}) {
-  const userId = "user123";
+}: ChatMessageViewProps) {
   const router = useRouter();
-
+  const [messages, setMessages] = useState<RedisMessage[]>(initialMessages);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // Animasi variabel
+  const messageVariants = {
+    hidden: { opacity: 0, x: -50 },
+    visible: { opacity: 1, x: 0 },
+    exit: { opacity: 0, x: 50 },
+  };
+
+  const loadingVariants = {
+    initial: { opacity: 0 },
+    animate: { opacity: 1 },
+    exit: { opacity: 0 },
+  };
+
+  // Scroll otomatis ke bawah setiap kali pesan diperbarui
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
+  // Fungsionalitas pembuatan sesi baru atau pembaruan sesi
+  const createOrUpdateSession = async (newSessionId: string) => {
+    try {
+      if (!conversationId) {
+        router.replace(`/chat-ai/${newSessionId}`);
+        return newSessionId;
+      }
+      return conversationId;
+    } catch (error) {
+      throw error;
+    }
+  };
 
   const handleSubmit = async (e: FormEvent) => {
-    setIsLoading(true);
     e.preventDefault();
-    if (!input.trim()) return;
+    if (!input.trim() || isLoading) return;
 
-    if (historyChat.length === 0) {
-      router.push(`/chat-ai/${conversationId}`);
-    }
+    setIsLoading(true);
+    const userInput = input;
+    setInput("");
 
+    const finalConversationId = conversationId ?? Date.now().toString();
+
+    // await redisClient.storeMessage("user123", finalConversationId, {
+    //   role: "user",
+    //   content: userInput,
+    //   model: "deepseek/deepseek-chat",
+    // });
+
+    const currentSessionId = await createOrUpdateSession(finalConversationId);
     try {
-      const req = await fetch(
-        `${process.env.NEXT_PUBLIC_REDIS_BE}?userId=${userId}&conversationId=${conversationId}`,
+      // Optimistic update dengan menambahkan pesan user
+      const userMessage: RedisMessage = { role: "user", content: userInput };
+      setMessages((prev) => [
+        ...prev,
+        userMessage,
+        { role: "assistant", content: "" },
+      ]);
+
+      // Kirim permintaan chat ke API
+      const response = await fetch(
+        `/api/chat?conversationId=${currentSessionId}`,
         {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            model: "deepseek/deepseek-r1:free",
+            model: "deepseek/deepseek-chat",
             messages: [
-              {
-                role: "user",
-                content: [
-                  {
-                    type: "text",
-                    text: input,
-                  },
-                ],
-              },
+              { role: "user", content: [{ type: "text", text: userInput }] },
             ],
+            stream: true,
           }),
         },
       );
 
-      await req.json();
-      setInput("");
-      router.refresh();
+      if (!response.body) throw new Error("Failed to get response body");
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let assistantContent = "";
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        const chunk = decoder.decode(value);
+        assistantContent += chunk;
+
+        setMessages((prev) => {
+          const newMessages = [...prev];
+          const lastMessage = newMessages[newMessages.length - 1];
+          if (lastMessage.role === "assistant") {
+            lastMessage.content = assistantContent;
+          }
+          return newMessages;
+        });
+      }
     } catch (error) {
-      console.log(error);
+      console.error("Chat error:", error);
+      setMessages((prev) => prev.slice(0, -2)); // Rollback jika terjadi kesalahan
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleAttachFile = () => {
-    //
-  };
-
-  const handleMicrophoneClick = () => {
-    //
-  };
+  // Komponen animasi loading
+  const LoadingBubble = () => (
+    <motion.div
+      initial="initial"
+      animate="animate"
+      exit="exit"
+      variants={loadingVariants}
+      className="flex items-center gap-2 rounded-lg bg-gray-100 p-4 dark:bg-gray-800"
+    >
+      <motion.div
+        animate={{ opacity: [0.5, 1, 0.5] }}
+        transition={{ repeat: Infinity, duration: 1.5 }}
+        className="h-2 w-2 rounded-full bg-gray-500"
+      />
+      <motion.div
+        animate={{ opacity: [0.5, 1, 0.5] }}
+        transition={{ repeat: Infinity, duration: 1.5, delay: 0.2 }}
+        className="h-2 w-2 rounded-full bg-gray-500"
+      />
+      <motion.div
+        animate={{ opacity: [0.5, 1, 0.5] }}
+        transition={{ repeat: Infinity, duration: 1.5, delay: 0.4 }}
+        className="h-2 w-2 rounded-full bg-gray-500"
+      />
+    </motion.div>
+  );
 
   return (
-    <>
-      <div className="relative flex h-full flex-col justify-between">
-        <div className="">
-          {historyChat.length > 0 ? (
-            <ChatMessageList>
-              {historyChat &&
-                historyChat.map(({ content, role }, idx) => (
-                  <ChatBubble
-                    variant={role === "user" ? "sent" : "received"}
-                    key={idx}
-                  >
-                    <ChatBubbleAvatar
-                      className="h-8 w-8 shrink-0"
-                      src={
-                        role === "user"
-                          ? "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=64&h=64&q=80&crop=faces&fit=crop"
-                          : "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=64&h=64&q=80&crop=faces&fit=crop"
-                      }
-                      fallback={role === "user" ? "US" : "AI"}
-                    />
-
-                    {role === "user" && (
-                      <ChatBubbleMessage variant={"sent"}>
-                        {role === "user"
-                          ? (content as TUserContent[])[0].text
-                          : ""}
-                      </ChatBubbleMessage>
-                    )}
-
-                    {role === "assistant" && (
-                      <ChatBubbleMessage variant={"received"}>
-                        <article className="pros">
-                          <ReactMarkdown>
-                            {role === "assistant" && content
-                              ? content.toString()
-                              : ""}
-                          </ReactMarkdown>
-                        </article>
-                      </ChatBubbleMessage>
-                    )}
-                  </ChatBubble>
-                ))}
-
-              {isLoading && (
-                <ChatBubble variant="received">
-                  <ChatBubbleAvatar
-                    className="h-8 w-8 shrink-0"
-                    src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=64&h=64&q=80&crop=faces&fit=crop"
-                    fallback="AI"
-                  />
-                  <ChatBubbleMessage isLoading />
-                </ChatBubble>
-              )}
-            </ChatMessageList>
-          ) : (
-            <h2 className="from-primary to-danger bg-gradient-to-r bg-clip-text text-3xl font-semibold text-transparent">
-              Welcome, how can i help you today?
-            </h2>
-          )}
-        </div>
-        <div className="sticky bottom-0 z-10 pb-10">
-          <div className="h-10 w-full rounded-md bg-[linear-gradient(to_bottom,rgba(0,0,0,0)_0%,rgba(23,23,23,0.5)_60%)] before:absolute before:inset-x-0 before:bottom-0 before:-z-10 before:h-[50%] before:bg-neutral-900"></div>
-
-          <form
-            onSubmit={handleSubmit}
-            className="w-full space-y-2.5 rounded-lg border border-neutral-600 bg-neutral-900 p-1 focus:outline-0"
+    <div className="mx-auto flex h-full max-w-3xl flex-col">
+      <div className="flex-1 space-y-4 overflow-y-auto p-4">
+        {messages.length === 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="py-12 text-center"
           >
-            <TextAreatAutoGrowing
-              setText={setInput}
-              value={input}
-              placeholder="Type your message..."
-              className="max-h-32 overflow-y-auto border-none bg-neutral-900 p-3 focus:ring-0 md:max-h-40 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300 dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 dark:[&::-webkit-scrollbar-track]:bg-neutral-700"
-            />
+            <h1 className="mb-4 text-3xl font-bold">
+              Selamat datang di ArcalisAI
+            </h1>
+            <p className="text-gray-600 dark:text-gray-400">
+              Mulailah percakapan dengan mengetik pesan Anda di bawah ini
+            </p>
+          </motion.div>
+        )}
 
-            <div className="flex items-center justify-between p-3 pt-0">
-              <div className="flex">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  type="button"
-                  onClick={handleAttachFile}
-                >
-                  <Paperclip className="size-4" />
-                </Button>
-
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  type="button"
-                  onClick={handleMicrophoneClick}
-                >
-                  <Mic className="size-4" />
-                </Button>
-              </div>
-              <Button
-                type="submit"
-                className="size-14 cursor-pointer rounded-full border-0 border-solid border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.1)] text-[rgba(255,255,255,0.8)] uppercase no-underline backdrop-blur-[30px] hover:bg-[rgba(255,255,255,0.2)]"
+        <AnimatePresence>
+          {messages.map((message, index) => (
+            <motion.div
+              key={index}
+              variants={messageVariants}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+              transition={{ duration: 0.3 }}
+              className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}
+            >
+              <div
+                className={`max-w-lg rounded-lg p-4 ${
+                  message.role === "user"
+                    ? "bg-blue-500 text-white"
+                    : "bg-gray-100 dark:bg-gray-800"
+                }`}
               >
-                <SendHorizontal size="25px" />
-              </Button>
-            </div>
-          </form>
-        </div>
+                <p className="whitespace-pre-wrap">{message.content}</p>
+              </div>
+            </motion.div>
+          ))}
+
+          {isLoading && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="flex justify-start"
+            >
+              <LoadingBubble />
+            </motion.div>
+          )}
+        </AnimatePresence>
+        <div ref={messagesEndRef} />
       </div>
-    </>
+
+      <form onSubmit={handleSubmit} className="border-t p-4">
+        <motion.div layout className="flex gap-2">
+          <input
+            type="text"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            placeholder="Ketik pesan Anda..."
+            className="flex-1 rounded-lg border p-2 dark:bg-gray-900"
+            disabled={isLoading}
+          />
+          <motion.button
+            type="submit"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="rounded-lg bg-blue-500 px-4 py-2 text-white disabled:opacity-50"
+            disabled={isLoading || !input.trim()}
+          >
+            {isLoading ? "Memproses..." : "Kirim"}
+          </motion.button>
+        </motion.div>
+      </form>
+    </div>
   );
 }
