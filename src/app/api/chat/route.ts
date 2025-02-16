@@ -146,8 +146,9 @@ export async function POST(request: NextRequest) {
       return new Response(
         new ReadableStream({
           async start(controller) {
+            let isControllerClosed = false; // Track if controller is closed
+
             try {
-              // Store user message to Redis
               await redisClient.storeMessage(userId, conversationId, {
                 role: "user",
                 content: messages[messages.length - 1]?.content || "",
@@ -160,7 +161,10 @@ export async function POST(request: NextRequest) {
                 onEvent: (event: EventSourceMessage) => {
                   try {
                     if (event.data === "[DONE]") {
-                      controller.close();
+                      if (!isControllerClosed) {
+                        controller.close();
+                        isControllerClosed = true;
+                      }
                       return;
                     }
 
@@ -172,7 +176,10 @@ export async function POST(request: NextRequest) {
                     }
                   } catch (e) {
                     console.error("Stream parsing error:", e);
-                    controller.error(e);
+                    if (!isControllerClosed) {
+                      controller.error(e);
+                      isControllerClosed = true;
+                    }
                   }
                 },
               });
@@ -185,12 +192,18 @@ export async function POST(request: NextRequest) {
                 }
               } catch (e) {
                 console.error("Error reading stream:", e);
-                controller.error(e);
+                if (!isControllerClosed) {
+                  controller.error(e);
+                  isControllerClosed = true;
+                }
               } finally {
-                controller.close();
+                // Only close if not already closed
+                if (!isControllerClosed) {
+                  controller.close();
+                  isControllerClosed = true;
+                }
               }
 
-              // Store assistant's response to Redis
               if (accumulatedContent) {
                 try {
                   await redisClient.storeMessage(userId, conversationId, {
@@ -199,12 +212,15 @@ export async function POST(request: NextRequest) {
                     model: payload.model,
                   });
                 } catch (e) {
-                  console.error("Error storing assistant message to Redis:", e);
+                  console.error("Error storing assistant message:", e);
                 }
               }
             } catch (err) {
               console.error("Error in ReadableStream start function:", err);
-              controller.error(err);
+              if (!isControllerClosed) {
+                controller.error(err);
+                isControllerClosed = true;
+              }
             }
           },
         }),

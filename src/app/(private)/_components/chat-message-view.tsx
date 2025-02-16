@@ -33,12 +33,10 @@ export default function ChatMessageView({
     exit: { opacity: 0 },
   };
 
-  // Scroll otomatis ke bawah setiap kali pesan diperbarui
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  // Fungsionalitas pembuatan sesi baru atau pembaruan sesi
   const createOrUpdateSession = async (newSessionId: string) => {
     try {
       if (!conversationId) {
@@ -59,7 +57,6 @@ export default function ChatMessageView({
     const userInput = input;
     setInput("");
 
-    // Gunakan conversationId yang sudah ada, atau generate baru jika belum ada
     const finalConversationId = conversationId ?? Date.now().toString();
 
     const userMessage: RedisMessage = { role: "user", content: userInput };
@@ -68,12 +65,10 @@ export default function ChatMessageView({
       content: "",
     };
 
-    // Update UI: tambahkan pesan user dan placeholder pesan assistant
     setMessages((prev) => [...prev, userMessage, tempAssistantMessage]);
 
     try {
-      const streamMode = false;
-      // Mengirim request chat ke API dengan conversationId awal
+      const streamMode = true;
       const response = await fetch(
         `/api/chat?conversationId=${finalConversationId}`,
         {
@@ -135,11 +130,9 @@ export default function ChatMessageView({
         });
       }
 
-      // Panggil createOrUpdateSession setelah respons AI diterima dan diproses
       await createOrUpdateSession(finalConversationId);
     } catch (error) {
       console.error("Chat error:", error);
-      // Rollback update UI jika terjadi error
       setMessages((prev) => prev.slice(0, -2));
     } finally {
       setIsLoading(false);
@@ -154,7 +147,6 @@ export default function ChatMessageView({
     //
   };
 
-  // Komponen animasi loading
   const LoadingBubble = () => (
     <motion.div
       initial="initial"
