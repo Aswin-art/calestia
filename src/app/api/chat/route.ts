@@ -123,24 +123,22 @@ export async function POST(request: NextRequest) {
             const reader = response.body!.getReader();
             const parser = createParser({
               onEvent: (event: EventSourceMessage) => {
-                if (event.event === "event") {
-                  console.log("masuk event", event.event);
-                  try {
-                    if (event.data === "[DONE]") {
-                      controller.close();
-                      return;
-                    }
-
-                    const data = JSON.parse(event.data);
-                    console.log("data", data);
-                    const content = data.choices[0]?.delta?.content;
-                    if (content) {
-                      accumulatedContent += content;
-                      controller.enqueue(encoder.encode(content));
-                    }
-                  } catch (e) {
-                    console.error("Stream parsing error:", e);
+                console.log("masuk event", event.event);
+                try {
+                  if (event.data === "[DONE]") {
+                    controller.close();
+                    return;
                   }
+
+                  const data = JSON.parse(event.data);
+                  console.log("data", data);
+                  const content = data.choices[0]?.delta?.content;
+                  if (content) {
+                    accumulatedContent += content;
+                    controller.enqueue(encoder.encode(content));
+                  }
+                } catch (e) {
+                  console.error("Stream parsing error:", e);
                 }
               },
             });
@@ -153,6 +151,8 @@ export async function POST(request: NextRequest) {
               }
             } catch (e) {
               controller.error(e);
+            } finally {
+              controller.close();
             }
 
             if (accumulatedContent) {
