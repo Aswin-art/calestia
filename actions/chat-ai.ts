@@ -1,5 +1,6 @@
 "use server";
 
+import { redisClient, RedisMessage } from "@/lib/redis";
 import { redis } from "@/lib/utils";
 import type { TChatMessage } from "@/types/index.type";
 
@@ -31,24 +32,29 @@ export const historyChatAI = async (
 
 export const roomChatAI = async (userId: string) => {
   try {
-    // Ambil daftar conversation untuk user dari Redis
-    const conversations = await redis.smembers(`conversations:${userId}`);
+    // Ambil daftar conversation untuk user menggunakan method redisClient
+    const conversations = await redisClient.getUserConversations(userId);
 
     if (conversations.length > 0) {
-      // Ambil semua history chat berdasarkan conversationId yang ditemukan
+      // Untuk setiap conversation, ambil history chat-nya
       const datas = await Promise.all(
         conversations.map(async (roomId) => {
-          const messages = (await redis.lrange(
-            `history:${userId}:${roomId}`,
-            0,
-            -1,
-          )) as unknown as TChatMessage[];
+          // getHistory mengembalikan array string, jadi kita parsing tiap pesan
+          const rawMessages = await redisClient.getHistory(userId, roomId);
+          const messages = rawMessages.map((msg) =>
+            JSON.parse(msg),
+          ) as RedisMessage[];
+
+          // Cari pesan dari assistant untuk dijadikan title (dengan pengecekan jika tidak ada)
+          const assistantMsg = messages.find(
+            ({ role }) => role === "assistant",
+          );
+          const title = assistantMsg ? assistantMsg.content : "";
 
           return {
-            roomId, // Simpan roomId agar bisa dilacak
-            messages: messages, // Parsing pesan dari Redis
-            title: messages.filter(({ role }) => role === "assistant")[0]
-              .content,
+            roomId, // untuk pelacakan
+            messages,
+            title,
           };
         }),
       );
