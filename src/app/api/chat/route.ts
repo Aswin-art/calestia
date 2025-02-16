@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextRequest, NextResponse } from "next/server";
 import { createParser, type EventSourceMessage } from "eventsource-parser";
@@ -45,6 +46,17 @@ const validateAccess = (
   return null;
 };
 
+export async function GET(request: Request) {
+  return NextResponse.json(
+    {
+      message: "asmasn",
+    },
+    {
+      status: 200,
+    },
+  );
+}
+
 export async function POST(request: NextRequest) {
   try {
     const { userId, tier } = authenticate(request);
@@ -54,6 +66,17 @@ export async function POST(request: NextRequest) {
     const { model, messages, stream, schema } = body;
     const conversationId =
       searchParams.get("conversationId") || Date.now().toString();
+
+    if (
+      !Array.isArray(messages) ||
+      messages.length === 0 ||
+      typeof messages[messages.length - 1].content !== "string"
+    ) {
+      return NextResponse.json(
+        { error: "Invalid messages format" },
+        { status: 400 },
+      );
+    }
 
     // Validate model access
     const accessValidation = validateAccess(model, tier);
@@ -68,15 +91,21 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    let history: any[] = [];
+    try {
+      history = await redisClient.getHistory(userId, conversationId);
+    } catch (error) {
+      console.error("Error fetching history:", error);
+      history = [];
+    }
+
     // Build payload
     const payload: ChatPayload = {
       model,
-      messages: await redisClient
-        .getHistory(userId, conversationId)
-        .then((history) => [
-          ...history.map(({ role, content }) => ({ role, content })),
-          ...messages,
-        ]),
+      messages: [
+        ...history.map(({ role, content }) => ({ role, content })),
+        ...messages,
+      ],
       stream,
       max_tokens: modelConfig.maxTokens,
       temperature: 0.7,
@@ -104,8 +133,6 @@ export async function POST(request: NextRequest) {
         },
       );
 
-      console.log(response.body);
-
       if (!response.body) {
         return NextResponse.json(
           { error: "Failed to initiate stream" },
@@ -119,57 +146,101 @@ export async function POST(request: NextRequest) {
       return new Response(
         new ReadableStream({
           async start(controller) {
-            let accumulatedContent = "";
-            const reader = response.body!.getReader();
-            const parser = createParser({
-              onEvent: (event: EventSourceMessage) => {
-                console.log("masuk event", event.event);
-                try {
-                  if (event.data === "[DONE]") {
-                    controller.close();
-                    return;
-                  }
-
-                  const data = JSON.parse(event.data);
-                  console.log("data", data);
-                  const content = data.choices[0]?.delta?.content;
-                  if (content) {
-                    accumulatedContent += content;
-                    controller.enqueue(encoder.encode(content));
-                  }
-                } catch (e) {
-                  console.error("Stream parsing error:", e);
-                }
-              },
-            });
-
             try {
-              while (true) {
-                const { done, value } = await reader.read();
-                if (done) break;
-                parser.feed(decoder.decode(value));
-              }
-            } catch (e) {
-              controller.error(e);
-            } finally {
-              controller.close();
-            }
+              // Store user message to Redis
+              await redisClient.storeMessage(userId, conversationId, {
+                role: "user",
+                content: messages[messages.length - 1]?.content || "",
+                model: model,
+              });
 
-            if (accumulatedContent) {
+              let accumulatedContent = "";
+              const reader = response.body!.getReader();
+              const parser = createParser({
+                onEvent: (event: EventSourceMessage) => {
+                  try {
+                    if (event.data === "[DONE]") {
+                      controller.close();
+                      return;
+                    }
+
+                    const data = JSON.parse(event.data);
+                    const content = data.choices[0]?.delta?.content;
+                    if (content) {
+                      accumulatedContent += content;
+                      controller.enqueue(encoder.encode(content));
+                    }
+                  } catch (e) {
+                    console.error("Stream parsing error:", e);
+                    controller.error(e);
+                  }
+                },
+              });
+
               try {
-                await redisClient.storeMessage(userId, conversationId, {
-                  role: "assistant",
-                  content: accumulatedContent,
-                  model: payload.model,
-                });
+                while (true) {
+                  const { done, value } = await reader.read();
+                  if (done) break;
+                  parser.feed(decoder.decode(value));
+                }
               } catch (e) {
-                console.error("Error storing batched message to Redis:", e);
+                console.error("Error reading stream:", e);
+                controller.error(e);
+              } finally {
+                controller.close();
               }
+
+              // Store assistant's response to Redis
+              if (accumulatedContent) {
+                try {
+                  await redisClient.storeMessage(userId, conversationId, {
+                    role: "assistant",
+                    content: accumulatedContent,
+                    model: payload.model,
+                  });
+                } catch (e) {
+                  console.error("Error storing assistant message to Redis:", e);
+                }
+              }
+            } catch (err) {
+              console.error("Error in ReadableStream start function:", err);
+              controller.error(err);
             }
           },
         }),
         { headers: { "Content-Type": "text/event-stream" } },
       );
+    } else {
+      const response = await fetch(
+        "https://openrouter.ai/api/v1/chat/completions",
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
+            "Content-Type": "application/json",
+            "X-Title": "ArcalisAI",
+          },
+          body: JSON.stringify(payload),
+        },
+      );
+
+      const data = await response.json();
+      const assistantContent = data.choices[0].message.content;
+
+      await redisClient.storeMessage(userId, conversationId, {
+        role: "user",
+        content: messages[messages.length - 1].content,
+        model: model,
+      });
+      await redisClient.storeMessage(userId, conversationId, {
+        role: "assistant",
+        content: assistantContent,
+        model: model,
+      });
+
+      return new Response(JSON.stringify(data), {
+        headers: { "Content-Type": "application/json" },
+      });
     }
   } catch (error: any) {
     console.error("API Error:", error);

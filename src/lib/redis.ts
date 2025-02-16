@@ -32,8 +32,6 @@ export const redisClient = {
     try {
       if (!userId || !conversationId) return;
 
-      console.log(message);
-
       const key = `history:${userId}:${conversationId}`;
       await redis.rpush(key, JSON.stringify(message));
       await redis.expire(key, 604800);
@@ -43,14 +41,12 @@ export const redisClient = {
     }
   },
 
-  async getHistory(
-    userId: string,
-    conversationId: string,
-  ): Promise<RedisMessage[]> {
+  async getHistory(userId: string, conversationId: string): Promise<any[]> {
     try {
       const key = `history:${userId}:${conversationId}`;
       const data = await redis.lrange(key, 0, -1);
-      return data.map((item) => JSON.parse(item as string));
+
+      return data;
     } catch (error) {
       console.error("Redis Error:", error);
       return [];
