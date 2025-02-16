@@ -2,7 +2,7 @@
 import { SidebarDashboard } from "@/app/(private)/_components/sidebar-dashboard";
 import ChoiseModel from "../_components/choise-model";
 import { useAccount } from "wagmi";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import Link from "next/link";
 
 export default function ChatLayout({
