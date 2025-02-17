@@ -108,7 +108,7 @@ export async function POST(request: NextRequest) {
       ],
       stream,
       max_tokens: modelConfig.maxTokens,
-      temperature: 0.7,
+      temperature: 0.3,
       ...(modelConfig.supportsSchema &&
         schema && {
           response_format: { type: "json_schema", schema },
