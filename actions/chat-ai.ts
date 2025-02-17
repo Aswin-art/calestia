@@ -32,41 +32,36 @@ export const historyChatAI = async (
 
 export const roomChatAI = async (userId: string) => {
   try {
-    // Ambil daftar conversation untuk user menggunakan method redisClient
     const conversations = await redisClient.getUserConversations(userId);
 
     if (conversations.length > 0) {
-      // Untuk setiap conversation, ambil history chat-nya
       const datas = await Promise.all(
         conversations.map(async (roomId) => {
-          // getHistory mengembalikan array string, jadi kita parsing tiap pesan
           const rawMessages = await redisClient.getHistory(userId, roomId);
-          const messages = rawMessages.map((msg) =>
-            JSON.parse(msg),
-          ) as RedisMessage[];
 
-          // Cari pesan dari assistant untuk dijadikan title (dengan pengecekan jika tidak ada)
+          // Tidak perlu parsing karena data sudah berupa object
+          const messages = rawMessages as RedisMessage[];
+
           const assistantMsg = messages.find(
             ({ role }) => role === "assistant",
           );
           const title = assistantMsg ? assistantMsg.content : "";
 
           return {
-            roomId, // untuk pelacakan
+            roomId,
             messages,
             title,
           };
         }),
       );
 
-      // Urutkan data berdasarkan roomId secara descending
       const sortedDatas = datas.sort(
         (a, b) => Number(b.roomId) - Number(a.roomId),
       );
       return sortedDatas;
     }
 
-    return []; // Jika tidak ada percakapan, kembalikan array kosong
+    return [];
   } catch (error) {
     console.error(`Error fetching room chats for user ${userId}:`, error);
     throw error;
