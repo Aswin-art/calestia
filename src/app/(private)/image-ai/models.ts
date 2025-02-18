@@ -216,3 +216,21 @@ export const BASE_MODELS = [
     },
   ];
   
+  export const SAMPLER_OPTIONS = [
+    'DPM2 Karras',
+    'DPM2 a Karras',
+    'DPM++ 2S a Karras',
+    'DPM++ 2M Karras',
+    'DPM++ SDE Karras',
+    'DDIM',
+    'PLMS',
+    'UniPC',
+    'DPM2',
+    'DPM2 a',
+    'DPM++ 25 a',
+    'DPM++ 2M',
+    'DPM++ SDE',
+    'DPM fast',
+    'DPM adaptive',
+    'LMS Karras'
+  ]
