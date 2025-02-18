@@ -110,8 +110,8 @@ const NavigationPublic: React.FC = () => {
     },
     {
       title: "Image Generator",
-      isLock: true,
-      href: "#",
+      isLock: false,
+      href: "/image-ai",
       description: "Generate high-quality AI images from your description.",
     },
     {
