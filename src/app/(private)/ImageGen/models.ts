@@ -232,5 +232,13 @@ export const BASE_MODELS = [
     'DPM++ SDE',
     'DPM fast',
     'DPM adaptive',
-    'LMS Karras'
-  ]
+    'LMS Karras',
+    'Heun',
+    'SDXL',
+    'Euler',
+    'Euler a',
+    'LMS',
+  ];
+  
+  const uniqueSamplerOptions = [...new Set(SAMPLER_OPTIONS)];
+  

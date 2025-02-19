@@ -98,7 +98,7 @@ const NavigationPublic: React.FC = () => {
     {
       title: "Chat AI",
       isLock: false,
-      href: "/chat-ai",
+      href: "/chat",
       description:
         "Interact in real-time with AI to get instant answers and assistance.",
     },
@@ -111,7 +111,7 @@ const NavigationPublic: React.FC = () => {
     {
       title: "Image Generator",
       isLock: false,
-      href: "/image-ai",
+      href: "\ImageGen",
       description: "Generate high-quality AI images from your description.",
     },
     {
