@@ -217,6 +217,7 @@ export const BASE_MODELS = [
   ];
   
   export const SAMPLER_OPTIONS = [
+    'Euler a',
     'DPM2 Karras',
     'DPM2 a Karras',
     'DPM++ 2S a Karras',
@@ -236,7 +237,6 @@ export const BASE_MODELS = [
     'Heun',
     'SDXL',
     'Euler',
-    'Euler a',
     'LMS',
   ];
   

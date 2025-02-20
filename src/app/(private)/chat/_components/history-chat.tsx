@@ -5,8 +5,8 @@ import { motion } from "framer-motion";
 import React from "react";
 import { ChevronDown, Loader, Plus } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import { roomChatAI } from "../../../../actions/chat-ai";
 import Link from "next/link";
+import { roomChatAI } from "../../../../../actions/chat-ai";
 
 const HistoryChat: React.FC = () => {
   const { open, animate } = useSidebar();

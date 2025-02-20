@@ -74,7 +74,7 @@ export default function ImageAIPage() {
     imageNum: 1,
     guidance: 7.5,
     seed: -1,
-    sampler: 'DPM++ 2S a Karras',
+    sampler: 'Eueler a',
     clipSkip: 1,
     loras: [],
   })
@@ -85,7 +85,7 @@ export default function ImageAIPage() {
         ...prev,
         width: 1024,
         height: 768,
-        sampler: 'DPM++ 2S a Karras',
+        sampler: 'Eueler a',
         clipSkip: 1
       }))
     }
