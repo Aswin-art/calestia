@@ -1,9 +1,11 @@
+// src/app/api/chat/route.ts
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextRequest, NextResponse } from "next/server";
 import { createParser, type EventSourceMessage } from "eventsource-parser";
 import { redisClient } from "@/lib/redis";
 import { MODEL_CONFIG, TIER_CONFIG } from "@/assets/data";
+import { API_CONFIG } from "./config";
 
 export const runtime = "edge";
 
@@ -120,18 +122,15 @@ export async function POST(request: NextRequest) {
 
     // Handle streaming
     if (payload.stream) {
-      const response = await fetch(
-        "https://openrouter.ai/api/v1/chat/completions",
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
-            "Content-Type": "application/json",
-            "X-Title": "ArcalisAI",
-          },
-          body: JSON.stringify(payload),
+      const response = await fetch(API_CONFIG.OPENROUTER_URL, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
+          "Content-Type": "application/json",
+          "X-Title": "ArcalisAI",
         },
-      );
+        body: JSON.stringify(payload),
+      });
 
       if (!response.body) {
         return NextResponse.json(
@@ -227,18 +226,15 @@ export async function POST(request: NextRequest) {
         { headers: { "Content-Type": "text/event-stream" } },
       );
     } else {
-      const response = await fetch(
-        "https://openrouter.ai/api/v1/chat/completions",
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
-            "Content-Type": "application/json",
-            "X-Title": "ArcalisAI",
-          },
-          body: JSON.stringify(payload),
+      const response = await fetch(API_CONFIG.OPENROUTER_URL, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
+          "Content-Type": "application/json",
+          "X-Title": "ArcalisAI",
         },
-      );
+        body: JSON.stringify(payload),
+      });
 
       const data = await response.json();
       const assistantContent = data.choices[0].message.content;
