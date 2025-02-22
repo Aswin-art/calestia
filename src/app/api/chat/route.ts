@@ -5,7 +5,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { createParser, type EventSourceMessage } from "eventsource-parser";
 import { redisClient } from "@/lib/redis";
 import { MODEL_CONFIG, TIER_CONFIG } from "@/assets/data";
-import { API_CONFIG } from "./config";
 
 export const runtime = "edge";
 
@@ -122,7 +121,9 @@ export async function POST(request: NextRequest) {
 
     // Handle streaming
     if (payload.stream) {
-      const response = await fetch(API_CONFIG.OPENROUTER_URL, {
+      const OPENROUTER_API_URL = process.env.OPENROUTER_API_URL;
+
+      const response = await fetch(OPENROUTER_API_URL!, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
@@ -226,7 +227,8 @@ export async function POST(request: NextRequest) {
         { headers: { "Content-Type": "text/event-stream" } },
       );
     } else {
-      const response = await fetch(API_CONFIG.OPENROUTER_URL, {
+      const OPENROUTER_API_URL = process.env.OPENROUTER_API_URL;
+      const response = await fetch(OPENROUTER_API_URL!, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
