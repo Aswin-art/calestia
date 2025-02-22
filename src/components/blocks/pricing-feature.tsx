@@ -190,6 +190,7 @@ function PricingFeature() {
                   Basic chatbot functionality with no customization or DAO
                   interaction. Have 0 voting power.
                 </p>
+                <br />
                 <p className="mt-8 flex flex-col gap-2 text-xl lg:flex-row lg:items-center">
                   <span className="text-2xl">Free</span>
                   <span className="text-muted-foreground text-sm">
@@ -223,6 +224,7 @@ function PricingFeature() {
                   Advanced chatbot responses and DAO voting rights for community
                   proposals.
                 </p>
+                <br />
                 <p className="mt-8 flex flex-col gap-2 text-xl lg:flex-row lg:items-center">
                   <span className="text-2xl">0.0002 ETH</span>
                   <span className="text-muted-foreground text-sm">

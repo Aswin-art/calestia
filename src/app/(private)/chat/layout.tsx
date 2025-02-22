@@ -4,6 +4,7 @@ import ChoiseModel from "./_components/choise-model";
 import { useAccount } from "wagmi";
 import { buttonVariants } from "@/components/ui/button";
 import Link from "next/link";
+import { ConnectButton } from "@rainbow-me/rainbowkit";
 
 export default function ChatLayout({
   children,
@@ -35,15 +36,9 @@ export default function ChatLayout({
           allow you to securely manage your digital assets and perform
           transactions seamlessly.
         </p>
-        <Link
-          href={"/"}
-          className={buttonVariants({
-            className:
-              "animate-shimmer mt-10 inline-flex h-12 cursor-pointer items-center justify-center rounded-md border border-slate-800 bg-[linear-gradient(110deg,oklch(0.623_0.214_259.815),45%,rgba(255,255,255,0.5),55%,oklch(0.623_0.214_259.815))] bg-[length:200%_100%] px-6 font-medium text-zinc-100 transition-colors hover:text-slate-50",
-          })}
-        >
-          Back to home
-        </Link>
+        <div className="mt-8 text-center">
+          <ConnectButton />
+        </div>
       </div>
     );
   }
