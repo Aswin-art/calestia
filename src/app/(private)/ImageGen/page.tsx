@@ -1,11 +1,14 @@
 "use client";
 import { useState, useEffect } from "react";
 import { NovitaSDK, TaskStatus } from "novita-sdk";
-import { useAccount } from "wagmi";
+import { useAccount, useReadContract, useWriteContract } from "wagmi";
+import { publicClient } from "@/lib/wagmi";
+import config from "@/lib/config";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 import * as Tooltip from "@radix-ui/react-tooltip";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
+
 import {
   Wand2,
   Rocket,
@@ -75,6 +78,31 @@ export default function ImageAIPage() {
   const [isAdvancedMode, setIsAdvancedMode] = useState(false);
   const [customLoraName, setCustomLoraName] = useState("");
   const [customLoraStrength, setCustomLoraStrength] = useState(0.8);
+  const [userLevel, setUserLevel] = useState(0);
+  const { address } = useAccount();
+  const [dailyUsage, setDailyUsage] = useState(() => {
+    const savedUsage = localStorage.getItem("dailyUsage");
+    return savedUsage ? JSON.parse(savedUsage) : 0;
+  });
+
+  // Menentukan batas generate berdasarkan level
+  const limits = {
+    0: 3,
+    1: 20,
+    2: 50,
+    3: 100,
+  };
+
+  useEffect(() => {
+    const lastReset = localStorage.getItem("lastReset");
+    const today = new Date().toDateString();
+
+    if (lastReset !== today) {
+      localStorage.setItem("dailyUsage", JSON.stringify(0)); // Reset penggunaan
+      localStorage.setItem("lastReset", today);
+      setDailyUsage(0);
+    }
+  }, []);
 
   const [params, setParams] = useState<GenerationParams>({
     model: BASE_MODELS[0].value,
@@ -90,6 +118,16 @@ export default function ImageAIPage() {
     clipSkip: 1,
     loras: [],
   });
+
+  const checkUserLevel = async () => {
+    const level: any = await publicClient.readContract({
+      address: config.address as `0x${string}`,
+      abi: config.abi,
+      functionName: "userLevel",
+      args: [address],
+    });
+    return setUserLevel(Number(level));
+  };
 
   const getSuggestedPrompt = () => {
     const suggestedPrompts = [
@@ -149,6 +187,14 @@ export default function ImageAIPage() {
 
   const handleGenerate = async () => {
     if (loading) return;
+
+    if (userLevel !== null && dailyUsage >= limits[userLevel]) {
+      toast.error("Limit harian sudah habis. Coba lagi besok!", {
+        icon: <AlertCircle className="h-5 w-5" />,
+      });
+      return;
+    }
+
     setLoading(true);
     setFakeProgress(0);
     setRealProgress(0);
@@ -188,6 +234,12 @@ export default function ImageAIPage() {
             clearInterval(poll);
             setImages(progress.images || []);
             setLoading(false);
+
+            setDailyUsage((prev) => {
+              const newUsage = prev + 1;
+              localStorage.setItem("dailyUsage", JSON.stringify(newUsage)); // Simpan ke localStorage
+              return newUsage;
+            });
           }
 
           if (progress.task.status === TaskStatus.FAILED) {
@@ -212,6 +264,11 @@ export default function ImageAIPage() {
       toast.error("Failed to start generation");
     }
   };
+  useEffect(() => {
+    if (address) {
+      checkUserLevel();
+    }
+  }, [address]);
 
   if (!isConnected) {
     return (
@@ -246,6 +303,7 @@ export default function ImageAIPage() {
                 Arcalis Studio
               </h1>
             </div>
+            <h3>User Level: {userLevel !== null ? userLevel : "Loading..."}</h3>
 
             <div className="flex items-center gap-4">
               <div className="flex gap-1 rounded-full bg-neutral-950/50 p-1">
@@ -618,7 +676,9 @@ export default function ImageAIPage() {
                   ) : (
                     <div className="flex items-center gap-2">
                       <Wand2 className="h-6 w-6 text-white" />
-                      <span className="text-white">Generate Magic</span>
+                      <span className="text-white">
+                        Generate Magic ({dailyUsage}/{limits[userLevel ?? 0]})
+                      </span>
                     </div>
                   )}
                 </Button>

@@ -173,6 +173,7 @@ function PricingFeature() {
       <div className="container mx-auto">
         <div className="flex flex-col items-center justify-center gap-4 text-center">
           <Badge>Beta Price</Badge>
+
           <div className="flex flex-col gap-2">
             <h2 className="font-regular max-w-2xl text-center text-3xl tracking-tighter md:text-5xl">
               Evolve with AI, Governed by You

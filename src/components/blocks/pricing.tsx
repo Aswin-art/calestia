@@ -65,6 +65,13 @@ export function Pricing({
     args: [address],
   });
 
+  const { data: userLevel } = useReadContract({
+    abi: config.abi,
+    address: config.address as `0x${string}`,
+    functionName: "userLevel",
+    args: [address], // Mengirim alamat user sebagai parameter
+  });
+
   const handleToggle = (checked: boolean) => {
     setIsMonthly(!checked);
     if (checked && switchRef.current) {
@@ -192,6 +199,8 @@ export function Pricing({
 
   return (
     <div className="container mx-auto py-20">
+      <p>User Level: {userLevel ? userLevel.toString() : "Loading..."}</p>
+
       <div className="mb-12 space-y-4 text-center">
         <h2 className="text-4xl font-bold tracking-tight text-white sm:text-5xl">
           {title}
