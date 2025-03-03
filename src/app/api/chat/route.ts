@@ -62,10 +62,34 @@ export async function POST(request: NextRequest) {
     const { userId, tier } = authenticate(request);
     const { searchParams } = request.nextUrl;
     const body = await request.json();
+    let dynamicTemperature = 0.1;
+    let dynamicMaxToken = 0.1;
 
     const { model, messages, stream, schema } = body;
     const conversationId =
       searchParams.get("conversationId") || Date.now().toString();
+
+    // Get model configuration
+    const modelConfig = MODEL_CONFIG[model];
+    if (!modelConfig) {
+      return NextResponse.json(
+        { error: "Invalid model configuration" },
+        { status: 400 },
+      );
+    }
+
+    const messageLength = messages[0].content.length;
+
+    if (messageLength < 50) {
+      dynamicTemperature = 0.1;
+      dynamicMaxToken = 100;
+    } else if (messageLength >= 50 && messageLength < 200) {
+      dynamicTemperature = 0.3;
+      dynamicMaxToken = 300;
+    } else {
+      dynamicTemperature = 0.5;
+      dynamicMaxToken = modelConfig.maxTokens;
+    }
 
     if (
       !Array.isArray(messages) ||
@@ -81,15 +105,6 @@ export async function POST(request: NextRequest) {
     // Validate model access
     const accessValidation = validateAccess(model, tier);
     if (accessValidation) return accessValidation;
-
-    // Get model configuration
-    const modelConfig = MODEL_CONFIG[model];
-    if (!modelConfig) {
-      return NextResponse.json(
-        { error: "Invalid model configuration" },
-        { status: 400 },
-      );
-    }
 
     let history: any[] = [];
     try {
@@ -107,8 +122,8 @@ export async function POST(request: NextRequest) {
         ...messages,
       ],
       stream,
-      max_tokens: modelConfig.maxTokens,
-      temperature: 0.3,
+      max_tokens: dynamicMaxToken,
+      temperature: dynamicTemperature,
       ...(modelConfig.supportsSchema &&
         schema && {
           response_format: { type: "json_schema", schema },
