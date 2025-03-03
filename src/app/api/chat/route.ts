@@ -1,4 +1,3 @@
-// src/app/api/chat/route.ts
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextRequest, NextResponse } from "next/server";
@@ -61,7 +60,7 @@ export async function GET(request: Request) {
 export async function POST(request: NextRequest) {
   try {
     const { userId, tier } = authenticate(request);
-    const { searchParams } = new URL(request.url);
+    const { searchParams } = request.nextUrl;
     const body = await request.json();
 
     const { model, messages, stream, schema } = body;
@@ -122,6 +121,7 @@ export async function POST(request: NextRequest) {
     // Handle streaming
     if (payload.stream) {
       const OPENROUTER_API_URL = process.env.OPENROUTER_API_URL;
+      console.log("start streaming", process.env.OPENROUTER_API_URL);
 
       const response = await fetch(OPENROUTER_API_URL!, {
         method: "POST",
@@ -146,7 +146,7 @@ export async function POST(request: NextRequest) {
       return new Response(
         new ReadableStream({
           async start(controller) {
-            let isControllerClosed = false; // Track if controller is closed
+            let isControllerClosed = false;
 
             try {
               await redisClient.storeMessage(userId, conversationId, {

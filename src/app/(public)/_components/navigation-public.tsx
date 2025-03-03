@@ -98,7 +98,7 @@ const NavigationPublic: React.FC = () => {
     {
       title: "Chat AI",
       isLock: false,
-      href: "/chat",
+      href: "/chat-ai",
       description:
         "Interact in real-time with AI to get instant answers and assistance.",
     },
