@@ -1,7 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 import { useState, useEffect } from "react";
 import { NovitaSDK, TaskStatus } from "novita-sdk";
-import { useAccount, useReadContract, useWriteContract } from "wagmi";
+import { useAccount } from "wagmi";
 import { publicClient } from "@/lib/wagmi";
 import config from "@/lib/config";
 import { toast } from "sonner";
@@ -11,9 +13,7 @@ import { ConnectButton } from "@rainbow-me/rainbowkit";
 
 import {
   Wand2,
-  Rocket,
   Sparkles,
-  Settings2,
   Search,
   AlertCircle,
   Loader2,
@@ -21,7 +21,6 @@ import {
   X,
   Check,
   Plus,
-  Sliders,
   Info,
 } from "lucide-react";
 import {
@@ -86,7 +85,7 @@ export default function ImageAIPage() {
   });
 
   // Menentukan batas generate berdasarkan level
-  const limits = {
+  const limits: Record<number, number> = {
     0: 3,
     1: 20,
     2: 50,
@@ -235,7 +234,7 @@ export default function ImageAIPage() {
             setImages(progress.images || []);
             setLoading(false);
 
-            setDailyUsage((prev) => {
+            setDailyUsage((prev: any) => {
               const newUsage = prev + 1;
               localStorage.setItem("dailyUsage", JSON.stringify(newUsage)); // Simpan ke localStorage
               return newUsage;

@@ -1,9 +1,9 @@
 import { Suspense } from "react";
 import { ErrorBoundary } from "next/dist/client/components/error-boundary";
-import { ErrorFallback } from "../../_components/error-fallback";
-import { ChatLoadingSkeleton } from "../../_components/chat-loading";
 import { redisClient } from "@/lib/redis";
-import ChatMessageView from "../../_components/chat-message-view";
+import ChatMessageView from "../_components/chat-message-view";
+import { ChatLoadingSkeleton } from "../_components/chat-loading";
+import { ErrorFallback } from "../_components/error-fallback";
 
 async function ChatContainer({ conversationId }: { conversationId: string }) {
   const userId = "user123";

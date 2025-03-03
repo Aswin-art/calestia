@@ -2,8 +2,6 @@
 import { SidebarDashboard } from "./_components/sidebar-dashboard";
 import ChoiseModel from "./_components/choise-model";
 import { useAccount } from "wagmi";
-import { buttonVariants } from "@/components/ui/button";
-import Link from "next/link";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 
 export default function ChatLayout({

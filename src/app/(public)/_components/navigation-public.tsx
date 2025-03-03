@@ -111,7 +111,7 @@ const NavigationPublic: React.FC = () => {
     {
       title: "Image Generator",
       isLock: false,
-      href: "\ImageGen",
+      href: "/image-gen",
       description: "Generate high-quality AI images from your description.",
     },
     {
