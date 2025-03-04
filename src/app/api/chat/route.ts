@@ -174,8 +174,10 @@ export async function POST(request: NextRequest) {
 
               let accumulatedContent = "";
               const reader = response.body!.getReader();
+              console.log("reader", reader);
               const parser = createParser({
                 onEvent: (event: EventSourceMessage) => {
+                  console.log("start event");
                   try {
                     if (event.data === "[DONE]") {
                       if (!isControllerClosed) {
@@ -187,6 +189,7 @@ export async function POST(request: NextRequest) {
 
                     const data = JSON.parse(event.data);
                     const content = data.choices[0]?.delta?.content;
+                    console.log("content", content);
                     if (content) {
                       accumulatedContent += content;
                       controller.enqueue(encoder.encode(content));
@@ -204,6 +207,7 @@ export async function POST(request: NextRequest) {
               try {
                 while (true) {
                   const { done, value } = await reader.read();
+                  console.log("value", value);
                   if (done) break;
                   parser.feed(decoder.decode(value));
                 }
