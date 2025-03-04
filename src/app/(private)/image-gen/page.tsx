@@ -302,7 +302,6 @@ export default function ImageAIPage() {
                 Arcalis Studio
               </h1>
             </div>
-            {/* <h3>User Level: {userLevel !== null ? userLevel : "Loading..."}</h3> */}
 
             <div className="flex items-center gap-4">
               <div className="flex gap-1 rounded-full bg-neutral-950/50 p-1">

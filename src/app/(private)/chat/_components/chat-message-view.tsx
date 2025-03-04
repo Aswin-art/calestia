@@ -13,11 +13,13 @@ import { ChatMessageList } from "@/components/ui/chat-message-list";
 import { ChatBubble, ChatBubbleMessage } from "./chat-bubble";
 
 interface ChatMessageViewProps {
+  userId: string | null;
   initialMessages: RedisMessage[];
   conversationId?: string;
 }
 
 export default function ChatMessageView({
+  userId,
   initialMessages,
   conversationId,
 }: ChatMessageViewProps) {
@@ -40,7 +42,7 @@ export default function ChatMessageView({
   const createOrUpdateSession = async (newSessionId: string) => {
     try {
       if (!conversationId) {
-        router.replace(`/chat-ai/${newSessionId}`);
+        router.replace(`/chat/${newSessionId}`);
         return newSessionId;
       }
       return conversationId;
@@ -68,6 +70,11 @@ export default function ChatMessageView({
     setMessages((prev) => [...prev, userMessage, tempAssistantMessage]);
 
     try {
+      if (!userId) {
+        console.log("Server is bussy!");
+        return;
+      }
+
       const streamMode = true;
       const response = await fetch(
         `/api/chat?conversationId=${finalConversationId}`,
@@ -75,7 +82,7 @@ export default function ChatMessageView({
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            "x-user-id": "user123",
+            "x-user-id": userId,
             "x-user-tier": "Explorer",
           },
           body: JSON.stringify({
@@ -204,7 +211,7 @@ export default function ChatMessageView({
               {messages.map((message, index) => (
                 <ChatBubble
                   variant={message.role === "user" ? "sent" : "received"}
-                  key={index} // Pastikan key ini unik; jika memungkinkan gunakan ID unik dari data
+                  key={index}
                 >
                   {message.role === "user" && (
                     <ChatBubbleMessage variant="sent">
@@ -242,7 +249,6 @@ export default function ChatMessageView({
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Form dengan posisi sticky di bagian bawah */}
       <form
         onSubmit={handleSubmit}
         className="sticky bottom-3 z-10 w-full space-y-2.5 rounded-lg border border-neutral-600 bg-neutral-900 p-1 focus:outline-0"

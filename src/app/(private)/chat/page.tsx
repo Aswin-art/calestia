@@ -1,19 +1,17 @@
-import { Suspense } from "react";
+"use client";
 import { ErrorBoundary } from "next/dist/client/components/error-boundary";
 import { ErrorFallback } from "./_components/error-fallback";
-import { ChatLoadingSkeleton } from "./_components/chat-loading";
 import ChatMessageView from "./_components/chat-message-view";
 
-async function ChatContainer() {
-  return <ChatMessageView initialMessages={[]} />;
+function ChatContainer() {
+  const storedUserId = localStorage.getItem("address");
+  return <ChatMessageView initialMessages={[]} userId={storedUserId} />;
 }
 
 const PageChatAi: React.FC = () => {
   return (
     <ErrorBoundary errorComponent={ErrorFallback}>
-      <Suspense fallback={<ChatLoadingSkeleton />}>
-        <ChatContainer />
-      </Suspense>
+      <ChatContainer />
     </ErrorBoundary>
   );
 };

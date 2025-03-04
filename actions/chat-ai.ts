@@ -21,7 +21,7 @@ export const historyChatAI = async (
       -1,
     );
 
-    // redirect(`/chat-ai?conversationId=${conversationId}`);
+    // redirect(`/chat?conversationId=${conversationId}`);
 
     return messages as unknown as TChatMessage[];
   } catch (error) {

@@ -3,15 +3,25 @@ import { SidebarDashboard } from "./_components/sidebar-dashboard";
 import ChoiseModel from "./_components/choise-model";
 import { useAccount } from "wagmi";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
+import { useEffect } from "react";
 
 export default function ChatLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const { address } = useAccount();
+  const { address, isConnected } = useAccount();
+
+  useEffect(() => {
+    if (isConnected) {
+      console.log("Wallet connected:", address);
+    } else {
+      console.log("Wallet not connected or logged out");
+    }
+  }, [isConnected, address]);
 
   if (address) {
+    localStorage.setItem("address", address);
     return (
       <SidebarDashboard>
         <div className="h-full w-full overflow-x-hidden overflow-y-auto rounded-tl-2xl border border-neutral-200 bg-white dark:border-neutral-700 dark:bg-neutral-900 [&::-webkit-scrollbar]:w-2.5 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300 dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 dark:[&::-webkit-scrollbar-track]:bg-neutral-700">
@@ -26,6 +36,7 @@ export default function ChatLayout({
       </SidebarDashboard>
     );
   } else {
+    localStorage.removeItem("address");
     return (
       <div className="flex h-screen w-full flex-col items-center justify-center">
         <h3 className="text-4xl font-bold">Please Connect Your Wallet</h3>

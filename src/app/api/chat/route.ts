@@ -148,6 +148,8 @@ export async function POST(request: NextRequest) {
         body: JSON.stringify(payload),
       });
 
+      console.log("response", response.body);
+
       if (!response.body) {
         return NextResponse.json(
           { error: "Failed to initiate stream" },

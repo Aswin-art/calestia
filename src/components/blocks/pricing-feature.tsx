@@ -200,7 +200,7 @@ function PricingFeature() {
                   </span>
                 </p>
                 <Link
-                  href={"/chat-ai"}
+                  href={"/chat"}
                   className={cn(
                     buttonVariants({
                       variant: "outline",

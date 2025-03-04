@@ -41,7 +41,11 @@ export const redisClient = {
     }
   },
 
-  async getHistory(userId: string, conversationId: string): Promise<any[]> {
+  async getHistory(
+    userId: string | null,
+    conversationId: string,
+  ): Promise<any[]> {
+    if (!userId || !conversationId) return [];
     try {
       const key = `history:${userId}:${conversationId}`;
       const data = await redis.lrange(key, 0, -1);

@@ -10,10 +10,12 @@ import { roomChatAI } from "../../../../../actions/chat-ai";
 
 const HistoryChat: React.FC = () => {
   const { open, animate } = useSidebar();
+  const address = localStorage.getItem("address");
 
   const { data, isLoading } = useQuery({
     queryKey: ["history_chatAI"],
-    queryFn: () => roomChatAI("user123"),
+    queryFn: () => roomChatAI(address as string),
+    enabled: address !== undefined,
   });
 
   return (
@@ -25,7 +27,7 @@ const HistoryChat: React.FC = () => {
       className="h-5/6 space-y-3.5 overflow-x-hidden overflow-y-auto pr-4 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300 dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 dark:[&::-webkit-scrollbar-track]:bg-neutral-700"
     >
       <Link
-        href={`/chat-ai/${Date.now()}`}
+        href={`/chat/${Date.now()}`}
         type="button"
         className="flex w-fit cursor-pointer items-center gap-x-4 truncate rounded-full px-4 py-2 font-semibold transition-all hover:border-[rgba(255,255,255,0.1)] hover:bg-[rgba(255,255,255,0.1)] hover:text-[rgba(255,255,255,0.8)] hover:backdrop-blur-[30px]"
       >
@@ -40,7 +42,7 @@ const HistoryChat: React.FC = () => {
         {data &&
           data.map(({ title, roomId }, idx) => (
             <Link
-              href={`/chat-ai/${roomId}`}
+              href={`/chat/${roomId}`}
               key={idx}
               className="flex items-center gap-x-4 truncate rounded-full px-4 py-2 font-semibold transition-all hover:border-[rgba(255,255,255,0.1)] hover:bg-[rgba(255,255,255,0.1)] hover:text-[rgba(255,255,255,0.8)] hover:backdrop-blur-[30px]"
             >

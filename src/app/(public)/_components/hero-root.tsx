@@ -4,7 +4,7 @@ import { ConnectButton, useConnectModal } from "@rainbow-me/rainbowkit";
 import { ArrowDown } from "lucide-react";
 import localFont from "next/font/local";
 import Link from "next/link";
-import React from "react";
+import React, { useEffect } from "react";
 import { useAccount } from "wagmi";
 
 const marsFont = localFont({
@@ -15,6 +15,14 @@ const marsFont = localFont({
 const HeroRoot: React.FC = () => {
   const { address } = useAccount();
   const { openConnectModal } = useConnectModal();
+
+  useEffect(() => {
+    if (address) {
+      localStorage.setItem("address", address);
+    } else {
+      localStorage.removeItem("address");
+    }
+  }, [address]);
   return (
     <section className="flex min-h-screen w-screen flex-col items-center justify-center">
       <div className="animate-glow animate-fade-left hidden h-px w-screen bg-linear-to-r from-zinc-300/0 via-zinc-300/50 to-zinc-300/0 md:block" />
