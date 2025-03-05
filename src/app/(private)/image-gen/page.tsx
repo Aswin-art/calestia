@@ -379,11 +379,8 @@ export default function ImageAIPage() {
                       setParams((prev) => ({ ...prev, prompt: e.target.value }))
                     }
                     className="min-h-[150px] border-2 border-neutral-700 bg-neutral-950/50 pt-6 text-lg text-gray-100 focus:border-blue-500/50"
-                    placeholder=" "
+                    placeholder="Describe your masterpiece..."
                   />
-                  <label className="pointer-events-none absolute top-2 left-4 text-sm text-gray-400">
-                    Describe your masterpiece...
-                  </label>
                   <button
                     onClick={getSuggestedPrompt}
                     className="mt-2 w-full rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
@@ -402,11 +399,8 @@ export default function ImageAIPage() {
                       }))
                     }
                     className="min-h-[100px] border-2 border-neutral-600 bg-neutral-950 pt-6 text-gray-100 focus:border-blue-500/50"
-                    placeholder=" "
+                    placeholder="What to exclude..."
                   />
-                  <label className="pointer-events-none absolute top-2 left-4 text-sm text-gray-400">
-                    What to exclude...
-                  </label>
                 </div>
 
                 <div className="space-y-6">
