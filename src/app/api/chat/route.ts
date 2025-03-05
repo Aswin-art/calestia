@@ -136,7 +136,6 @@ export async function POST(request: NextRequest) {
     // Handle streaming
     if (payload.stream) {
       const OPENROUTER_API_URL = process.env.OPENROUTER_API_URL;
-      console.log("start streaming", process.env.OPENROUTER_API_URL);
 
       const response = await fetch(OPENROUTER_API_URL!, {
         method: "POST",
@@ -147,8 +146,6 @@ export async function POST(request: NextRequest) {
         },
         body: JSON.stringify(payload),
       });
-
-      console.log("response", response.body);
 
       if (!response.body) {
         return NextResponse.json(
@@ -174,10 +171,8 @@ export async function POST(request: NextRequest) {
 
               let accumulatedContent = "";
               const reader = response.body!.getReader();
-              console.log("reader", reader);
               const parser = createParser({
                 onEvent: (event: EventSourceMessage) => {
-                  console.log("start event");
                   try {
                     if (event.data === "[DONE]") {
                       if (!isControllerClosed) {
@@ -189,7 +184,6 @@ export async function POST(request: NextRequest) {
 
                     const data = JSON.parse(event.data);
                     const content = data.choices[0]?.delta?.content;
-                    console.log("content", content);
                     if (content) {
                       accumulatedContent += content;
                       controller.enqueue(encoder.encode(content));
@@ -207,7 +201,6 @@ export async function POST(request: NextRequest) {
               try {
                 while (true) {
                   const { done, value } = await reader.read();
-                  console.log("value", value);
                   if (done) break;
                   parser.feed(decoder.decode(value));
                 }
@@ -218,7 +211,6 @@ export async function POST(request: NextRequest) {
                   isControllerClosed = true;
                 }
               } finally {
-                // Only close if not already closed
                 if (!isControllerClosed) {
                   controller.close();
                   isControllerClosed = true;

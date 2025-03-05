@@ -75,7 +75,7 @@ export default function ChatMessageView({
         return;
       }
 
-      const streamMode = false;
+      const streamMode = true;
       const response = await fetch(
         `/api/chat?conversationId=${finalConversationId}`,
         {
@@ -92,8 +92,6 @@ export default function ChatMessageView({
           }),
         },
       );
-
-      console.log("response", response);
 
       if (!response.ok) {
         const errorText = await response.text();
@@ -114,8 +112,6 @@ export default function ChatMessageView({
 
           const chunk = decoder.decode(value);
           assistantContent += chunk;
-
-          console.log("assistantContent", assistantContent);
 
           setMessages((prev) => {
             const newMessages = [...prev];
