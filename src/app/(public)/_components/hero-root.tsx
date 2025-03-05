@@ -6,6 +6,7 @@ import localFont from "next/font/local";
 import Link from "next/link";
 import React, { useEffect } from "react";
 import { useAccount } from "wagmi";
+import { cookiesManagement } from "../../../../actions/cookie-store";
 
 const marsFont = localFont({
   src: "../../../assets/fonts/mars.otf",
@@ -18,9 +19,9 @@ const HeroRoot: React.FC = () => {
 
   useEffect(() => {
     if (address) {
-      localStorage.setItem("address", address);
+      cookiesManagement(true, address);
     } else {
-      localStorage.removeItem("address");
+      cookiesManagement(false);
     }
   }, [address]);
   return (
