@@ -93,6 +93,8 @@ export default function ChatMessageView({
         },
       );
 
+      console.log("response", response);
+
       if (!response.ok) {
         const errorText = await response.text();
         console.error("Error text:", errorText);
