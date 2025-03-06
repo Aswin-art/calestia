@@ -97,7 +97,7 @@ function PricingFeature() {
   };
 
   const handleBuyPackage = async (name: string) => {
-    return toast("Failed To Vote", {
+    return toast("Failed To Buy", {
       description: "Our bitfinity server is currently down!",
     });
 

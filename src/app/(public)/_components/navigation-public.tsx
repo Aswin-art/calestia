@@ -105,7 +105,7 @@ const NavigationPublic: React.FC = () => {
     {
       title: "Video Generator",
       isLock: true,
-      href: "#",
+      href: "/#",
       description: "Automatically create videos from text or images using AI.",
     },
     {
@@ -117,13 +117,13 @@ const NavigationPublic: React.FC = () => {
     {
       title: "Face Editor",
       isLock: true,
-      href: "#",
+      href: "/#",
       description: "Edit faces in photos with automatic retouching features.",
     },
     {
       title: "Audio Generator",
       isLock: true,
-      href: "#",
+      href: "/#",
       description: "Quickly and easily create AI-generated sounds or music.",
     },
     {
@@ -149,10 +149,7 @@ const NavigationPublic: React.FC = () => {
               <Link href="/" className={`${marsFont.className} text-2xl`}>
                 Calestia
               </Link>
-              <Badge
-                variant="outline"
-                className="absolute -top-2 -right-25" // sesuaikan nilai top/right sesuai kebutuhan
-              >
+              <Badge variant="outline" className="absolute -top-2 -right-25">
                 <span className="text-xs text-red-500">Beta Version</span>
               </Badge>
             </div>
@@ -192,11 +189,7 @@ const NavigationPublic: React.FC = () => {
                   </NavigationMenuContent>
                 </NavigationMenuItem>
                 <NavigationMenuItem>
-                  <Link
-                    href="https://garrulous-coyote-265.notion.site/Arcalis-Documentation-1996834eb34880238e47cca691c1ed90"
-                    legacyBehavior
-                    passHref
-                  >
+                  <Link href="/#" legacyBehavior passHref>
                     <NavigationMenuLink
                       target="_blank"
                       className={cn(
@@ -209,11 +202,7 @@ const NavigationPublic: React.FC = () => {
                   </Link>
                 </NavigationMenuItem>
                 <NavigationMenuItem>
-                  <Link
-                    href="https://docs.google.com/document/d/1shUkg63IJZS5qH2ZFoy7xywzYKmw0fZYTVnFCiES_XQ/edit?tab=t.0"
-                    legacyBehavior
-                    passHref
-                  >
+                  <Link href="/#" legacyBehavior passHref>
                     <NavigationMenuLink
                       target="_blank"
                       className={cn(
@@ -243,7 +232,7 @@ const NavigationPublic: React.FC = () => {
 
           <div className="text-md text-zinc-40 hidden flex-1 justify-end gap-x-2 sm:gap-x-5 lg:flex">
             <Link
-              href={"https://discord.gg/ps4HpGEcS7"}
+              href={"/#"}
               target="_blank"
               className="hover:bg-accent rounded border border-white/50 p-1.5"
             >
@@ -257,7 +246,7 @@ const NavigationPublic: React.FC = () => {
               <IconTwitter className="size-4 fill-white" />
             </Link>
             <Link
-              href={"#"}
+              href={"/#"}
               target="_blank"
               className="hover:bg-accent rounded border border-white/50 p-1.5"
             >
@@ -265,7 +254,7 @@ const NavigationPublic: React.FC = () => {
             </Link>
 
             <Link
-              href={"#"}
+              href={"/#"}
               target="_blank"
               className="hover:bg-accent rounded border border-white/50 p-1.5"
             >
@@ -273,7 +262,7 @@ const NavigationPublic: React.FC = () => {
             </Link>
 
             <Link
-              href={"https://www.linkedin.com/company/arcalisai/"}
+              href={"/#"}
               target="_blank"
               className="hover:bg-accent rounded border border-white/50 p-1.5"
             >

@@ -24,7 +24,7 @@ const FAQ = () => {
           </p>
 
           <Link
-            href={"https://discord.gg/ps4HpGEcS7"}
+            href={"/#"}
             target="_blank"
             className={cn(
               buttonVariants({
