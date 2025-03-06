@@ -29,13 +29,36 @@ const mantaSepolia = defineChain({
   },
 });
 
+const bitfinityTestnet = defineChain({
+  id: 355113,
+  name: "Bitfinity Network Testnet",
+  network: "bitfinity-testnet",
+  nativeCurrency: {
+    name: "Bitfinity Token",
+    symbol: "BTF",
+    decimals: 18,
+  },
+  rpcUrls: {
+    default: {
+      http: ["https://testnet.bitfinity.network"],
+    },
+  },
+  blockExplorers: {
+    default: {
+      name: "Bitfinity Testnet Explorer",
+      url: "https://explorer.testnet.bitfinity.network",
+    },
+  },
+});
+
 export const config = getDefaultConfig({
   appName: "Calestia",
   projectId: "YOUR_PROJECT_ID",
   chains: [
     customMantaTestnetWagmi,
+    bitfinityTestnet,
     ...(process.env.NEXT_PUBLIC_ENABLE_TESTNETS === "true"
-      ? [customMantaTestnetWagmi]
+      ? [customMantaTestnetWagmi, bitfinityTestnet]
       : []),
   ],
   ssr: true,
