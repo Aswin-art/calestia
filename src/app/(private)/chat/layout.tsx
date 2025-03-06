@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 import { SidebarDashboard } from "./_components/sidebar-dashboard";
 import ChoiseModel from "./_components/choise-model";
@@ -15,22 +14,22 @@ export default function ChatLayout({
   const { address, isConnected } = useAccount();
 
   useEffect(() => {
-    if (isConnected) {
+    if (isConnected && address) {
       console.log("Wallet connected:", address);
+      cookiesManagement(true, address);
     } else {
       console.log("Wallet not connected or logged out");
+      cookiesManagement(false);
     }
   }, [isConnected, address]);
 
   if (address) {
-    cookiesManagement(true, address);
     return (
       <SidebarDashboard>
-        <div className="h-full w-full overflow-x-hidden overflow-y-auto rounded-tl-2xl border border-neutral-200 bg-white dark:border-neutral-700 dark:bg-neutral-900 [&::-webkit-scrollbar]:w-2.5 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300 dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 dark:[&::-webkit-scrollbar-track]:bg-neutral-700">
-          <div className="sticky top-0 z-50 w-full bg-neutral-900 px-2 py-1.5 md:px-10 md:py-2">
+        <div className="h-full w-full overflow-x-hidden overflow-y-auto bg-white dark:bg-neutral-900 [&::-webkit-scrollbar]:w-2.5 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300 dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 dark:[&::-webkit-scrollbar-track]:bg-neutral-700">
+          <div className="sticky top-5 z-50 hidden w-full px-2 py-1.5 md:px-10 md:py-2 lg:block">
             <ChoiseModel />
           </div>
-
           <div className="relative mx-auto h-full w-full max-w-(--breakpoint-lg) px-2 pt-2 md:px-10 md:pt-10 md:pb-0">
             {children}
           </div>
@@ -38,7 +37,6 @@ export default function ChatLayout({
       </SidebarDashboard>
     );
   } else {
-    cookiesManagement(false);
     return (
       <div className="flex h-screen w-full flex-col items-center justify-center">
         <h3 className="text-4xl font-bold">Please Connect Your Wallet</h3>

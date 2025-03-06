@@ -147,7 +147,7 @@ const NavigationPublic: React.FC = () => {
           <div className="flex flex-1 items-center gap-1">
             <div className="relative inline-block">
               <Link href="/" className={`${marsFont.className} text-2xl`}>
-                Arcalis
+                Calestia
               </Link>
               <Badge
                 variant="outline"
@@ -299,7 +299,7 @@ const NavigationPublic: React.FC = () => {
             <div className="flex h-full flex-col text-white">
               <div className="flex justify-between p-8">
                 <Link href={"/"} className="text-lg text-white">
-                  Arcalis
+                  Calestia
                 </Link>
 
                 <X className="size-6 cursor-pointer" onClick={toggleMenu} />

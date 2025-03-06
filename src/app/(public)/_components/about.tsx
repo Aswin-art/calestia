@@ -7,7 +7,7 @@ const About = () => {
     <>
       <div className="mb-20 flex flex-col items-center justify-center gap-2">
         <p className="text-center text-sm font-bold lg:text-xl">
-          About Arcalis
+          About Calestia
         </p>
         <div className="h-[1px] w-[10%] border border-b border-blue-500 lg:w-[5%]"></div>
       </div>
@@ -35,15 +35,15 @@ const About = () => {
           </h3>
           <div className="flex flex-col gap-2 text-justify text-sm lg:text-lg">
             <p>
-              Arcalis is the world’s first decentralized AI platform built on
-              <span className="font-bold">Manta Network</span>, designed to
+              Calestia is the world’s first decentralized AI platform built on
+              <span className="font-bold"> Manta Network</span>, designed to
               democratize access to advanced artificial intelligence. We combine
               cutting-edge AI models, blockchain-powered governance, and a
               privacy-first infrastructure to create an all-in-one ecosystem
               where users and developers collaborate to shape the future of AI.
             </p>
             <p>
-              Unlike traditional platforms controlled by corporations, Arcalis
+              Unlike traditional platforms controlled by corporations, Calestia
               empowers its community through{" "}
               <span className="font-bold">DAO governance</span>, allowing users
               to vote on model integrations, platform upgrades, and social
@@ -53,7 +53,7 @@ const About = () => {
               lock-in.
             </p>
             <p>
-              From startups to enterprises, educators to investors, Arcalis
+              From startups to enterprises, educators to investors, Calestia
               provides tailored AI solutions that adapt to your needs. Built on
               Manta Network’s zero-knowledge proofs (ZKPs), we guarantee{" "}
               <span className="font-bold">enterprise-grade security</span>,{" "}
@@ -67,7 +67,7 @@ const About = () => {
 
       <div className="mt-40 mb-20 flex flex-col items-center justify-center gap-2">
         <p className="text-muted-foreground text-center text-sm lg:text-xl">
-          Why Arcalis?
+          Why Calestia?
         </p>
         <h3 className="text-center text-xl font-bold lg:text-3xl">
           The Decentralized Advantage

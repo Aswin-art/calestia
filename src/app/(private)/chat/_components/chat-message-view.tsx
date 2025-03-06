@@ -11,6 +11,30 @@ import { Button } from "@/components/ui/button";
 import { TextAreatAutoGrowing } from "@/components/ui/text-area-autogrowing";
 import { ChatMessageList } from "@/components/ui/chat-message-list";
 import { ChatBubble, ChatBubbleMessage } from "./chat-bubble";
+import localFont from "next/font/local";
+
+const marsFont = localFont({
+  src: "../../../../assets/fonts/mars.otf",
+  variable: "--font-mars",
+});
+
+function FeatureCard({
+  icon,
+  title,
+  description,
+}: {
+  icon: string;
+  title: string;
+  description: string;
+}) {
+  return (
+    <div className="rounded-lg border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-gray-950">
+      <div className="mb-2 text-2xl">{icon}</div>
+      <h3 className="mb-2 text-lg font-semibold">{title}</h3>
+      <p className="text-sm text-gray-600 dark:text-gray-400">{description}</p>
+    </div>
+  );
+}
 
 interface ChatMessageViewProps {
   userId: string | null;
@@ -190,12 +214,36 @@ export default function ChatMessageView({
             transition={{ duration: 0.5 }}
             className="py-12"
           >
-            <h2 className="from-primary to-danger bg-gradient-to-r bg-clip-text text-3xl font-semibold text-transparent">
-              Welcome, how can I help you today?
+            <h2
+              className={`${marsFont.className} mb-3 text-center text-3xl font-semibold`}
+            >
+              Calestia
             </h2>
-            <p className="text-gray-600 dark:text-gray-400">
-              Start a conversation by typing your message below.
-            </p>
+            <h2 className="mb-10 text-center text-3xl font-semibold">
+              Good day! How may I assist you today?
+            </h2>
+            <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2">
+              <FeatureCard
+                icon="🌐"
+                title="Explore"
+                description="Learn how to use chat AI platform for your needs"
+              />
+              <FeatureCard
+                icon="⚡"
+                title="Capabilities"
+                description="How much capable chat AI to full fill your needs"
+              />
+              <FeatureCard
+                icon="🎯"
+                title="Examples"
+                description="See how others are using chat AI effectively"
+              />
+              <FeatureCard
+                icon="⚠️"
+                title="Limitations"
+                description="Understand current limitations and boundaries"
+              />
+            </div>
           </motion.div>
         )}
 
@@ -249,51 +297,53 @@ export default function ChatMessageView({
         <div ref={messagesEndRef} />
       </div>
 
-      <form
-        onSubmit={handleSubmit}
-        className="sticky bottom-3 z-10 w-full space-y-2.5 rounded-lg border border-neutral-600 bg-neutral-900 p-1 focus:outline-0"
-      >
-        <TextAreatAutoGrowing
-          setText={setInput}
-          value={input}
-          placeholder="Type your message..."
-          onKeyDown={(e) => {
-            if (e.key === "Enter" && !e.shiftKey) {
-              e.preventDefault();
-              handleSubmit(e as any);
-            }
-          }}
-          className="h-8 max-h-32 overflow-y-auto border-none bg-neutral-900 p-3 outline-none focus:ring-0 focus:outline-none md:max-h-40 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300 dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 dark:[&::-webkit-scrollbar-track]:bg-neutral-700"
-        />
+      <div className="sticky bottom-3 border-t border-gray-200 p-4 dark:border-gray-800">
+        <form
+          onSubmit={handleSubmit}
+          className="z-10 w-full space-y-2.5 rounded-lg border border-neutral-600 bg-neutral-900 p-1 focus:outline-0"
+        >
+          <TextAreatAutoGrowing
+            setText={setInput}
+            value={input}
+            placeholder="Type your message..."
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                handleSubmit(e as any);
+              }
+            }}
+            className="h-8 max-h-32 overflow-y-auto border-none bg-neutral-900 p-3 ring-0 outline-0 outline-none focus:border-0 focus:ring-0 focus:outline-0 focus:outline-none md:max-h-40 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300 dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 dark:[&::-webkit-scrollbar-track]:bg-neutral-700"
+          />
 
-        <div className="flex items-center justify-between p-3 pt-0">
-          <div className="flex">
-            <Button
-              variant="ghost"
-              size="icon"
-              type="button"
-              onClick={handleAttachFile}
-            >
-              <Paperclip className="size-4" />
-            </Button>
+          <div className="flex items-center justify-between p-3 pt-0">
+            <div className="flex">
+              <Button
+                variant="ghost"
+                size="icon"
+                type="button"
+                onClick={handleAttachFile}
+              >
+                <Paperclip className="size-4" />
+              </Button>
 
+              <Button
+                variant="ghost"
+                size="icon"
+                type="button"
+                onClick={handleMicrophoneClick}
+              >
+                <Mic className="size-4" />
+              </Button>
+            </div>
             <Button
-              variant="ghost"
-              size="icon"
-              type="button"
-              onClick={handleMicrophoneClick}
+              type="submit"
+              className="size-14 cursor-pointer rounded-full border-0 border-solid border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.1)] text-[rgba(255,255,255,0.8)] uppercase no-underline backdrop-blur-[30px] hover:bg-[rgba(255,255,255,0.2)]"
             >
-              <Mic className="size-4" />
+              <SendHorizontal size="25px" />
             </Button>
           </div>
-          <Button
-            type="submit"
-            className="size-14 cursor-pointer rounded-full border-0 border-solid border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.1)] text-[rgba(255,255,255,0.8)] uppercase no-underline backdrop-blur-[30px] hover:bg-[rgba(255,255,255,0.2)]"
-          >
-            <SendHorizontal size="25px" />
-          </Button>
-        </div>
-      </form>
+        </form>
+      </div>
     </div>
   );
 }

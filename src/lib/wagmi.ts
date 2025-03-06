@@ -30,7 +30,7 @@ const mantaSepolia = defineChain({
 });
 
 export const config = getDefaultConfig({
-  appName: "Arcalis",
+  appName: "Calestia",
   projectId: "YOUR_PROJECT_ID",
   chains: [
     customMantaTestnetWagmi,

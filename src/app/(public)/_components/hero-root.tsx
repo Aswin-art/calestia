@@ -31,7 +31,7 @@ const HeroRoot: React.FC = () => {
       <h1
         className={`${marsFont.className} text-edge-outline animate-title duration-3s z-10 cursor-default bg-white bg-linear-to-b from-neutral-50 to-neutral-400 bg-clip-text px-0.5 py-3.5 text-6xl font-bold whitespace-nowrap text-transparent sm:text-7xl md:text-9xl`}
       >
-        Arcalis
+        Calestia
       </h1>
 
       <div className="animate-glow animate-fade-right hidden h-px w-screen bg-linear-to-r from-zinc-300/0 via-zinc-300/50 to-zinc-300/0 md:block" />

@@ -2,10 +2,13 @@
 import { ErrorBoundary } from "next/dist/client/components/error-boundary";
 import { ErrorFallback } from "./_components/error-fallback";
 import ChatMessageView from "./_components/chat-message-view";
+import { useAccount } from "wagmi";
 
 function ChatContainer() {
-  const storedUserId = localStorage.getItem("address");
-  return <ChatMessageView initialMessages={[]} userId={storedUserId} />;
+  const { address } = useAccount();
+  return (
+    <ChatMessageView initialMessages={[]} userId={address as string | null} />
+  );
 }
 
 const PageChatAi: React.FC = () => {

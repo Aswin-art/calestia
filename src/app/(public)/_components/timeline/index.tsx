@@ -12,14 +12,14 @@ export function TimelineArcalis() {
             Beta Test Launch, Feedback Session & DAO Activation (Q1 2025)
           </h3>
           <p className="mb-4 text-xs font-normal text-neutral-800 md:text-sm dark:text-neutral-200">
-            Objective: Release the beta version of the Arcalis platform for
+            Objective: Release the beta version of the Calestia platform for
             testing and gather community feedback.
           </p>
           <ul className="mb-8 list-none pl-5 text-xs font-normal text-neutral-800 md:text-sm dark:text-neutral-200">
             <li className="mb-2 flex items-center">
               <CheckCircle className="mr-2" size={16} />
               <span>
-                KR1: Deploy the beta version of Arcalis chatbot with core
+                KR1: Deploy the beta version of Calestia chatbot with core
                 functionalities.
               </span>
             </li>
@@ -49,9 +49,9 @@ export function TimelineArcalis() {
             Full Chatbot Launch & Product Development (Q2 2025 – Q3 2025)
           </h3>
           <p className="mb-4 text-xs font-normal text-neutral-800 md:text-sm dark:text-neutral-200">
-            Objective: Officially launch the full version of the Arcalis chatbot
-            with multiple AI models and increased stability while preparing new
-            product offerings.
+            Objective: Officially launch the full version of the Calestia
+            chatbot with multiple AI models and increased stability while
+            preparing new product offerings.
           </p>
           <ul className="mb-8 list-none pl-5 text-xs font-normal text-neutral-800 md:text-sm dark:text-neutral-200">
             <li className="mb-2 flex items-center">
@@ -70,7 +70,7 @@ export function TimelineArcalis() {
             <li className="flex items-center">
               <CheckCircle className="mr-2" size={16} />
               <span>
-                KR3: Develop and introduce at least 2 new Arcalis products in
+                KR3: Develop and introduce at least 2 new Calestia products in
                 R&D phase.
               </span>
             </li>
@@ -91,7 +91,7 @@ export function TimelineArcalis() {
             <li className="mb-2 flex items-center">
               <CheckCircle className="mr-2" size={16} />
               <span>
-                KR1: Release at least 3 new Arcalis products into production.
+                KR1: Release at least 3 new Calestia products into production.
               </span>
             </li>
             <li className="mb-2 flex items-center">

@@ -22,7 +22,7 @@ const ChoiseModel: React.FC = () => {
           className="flex h-auto flex-col items-start -space-y-2.5 text-left"
         >
           <div className="flex items-center gap-x-3.5">
-            <h3 className="text-2xl font-medium text-white">Arcalis</h3>
+            <h3 className="text-2xl font-medium text-white">Calestia</h3>
             <ChevronDown className="size-6" />
           </div>
           <p className="text-lg text-neutral-400">{selectedModel.title}</p>

@@ -259,13 +259,13 @@ export const Schedule: React.FC = () => {
     >
       <div>
         <BlurIn
-          word="Arcalis Governance"
+          word="Calestia Governance"
           className="text-edge-outline font-display z-10 cursor-default bg-white bg-linear-to-b from-neutral-50 to-neutral-400 bg-clip-text px-0.5 py-3.5 text-center text-4xl font-bold whitespace-nowrap text-transparent lg:text-6xl"
         />
 
         <div className="space-y-4 lg:space-y-6">
           <p className="text-muted-foreground mx-auto max-w-2xl text-center">
-            Al shouldn&apos;t be controlled by a select few. With Arcalis DAO,
+            Al shouldn&apos;t be controlled by a select few. With Calestia DAO,
             you have the power to vote, propose changes, and influence the
             future of Al. Join a decentralized community that values
             transparency, fairness, and user-driven innovation.

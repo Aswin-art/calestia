@@ -19,8 +19,8 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "Arcalis",
-    template: "%s | Arcalis",
+    default: "Calestia",
+    template: "%s | Calestia",
   },
   description: "Switch Models Like Chains - The Multi-AI Ecosystem.",
 };

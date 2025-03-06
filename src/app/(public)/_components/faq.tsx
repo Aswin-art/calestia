@@ -41,11 +41,11 @@ const FAQ = () => {
       <Accordion type="single" collapsible className="w-full">
         <AccordionItem value="item-1">
           <AccordionTrigger className="text-md lg:text-lg">
-            How is Arcalis different from ChatGPT or other centralized AI
+            How is Calestia different from ChatGPT or other centralized AI
             platforms?
           </AccordionTrigger>
           <AccordionContent>
-            Unlike centralized services, Arcalis is governed by its users. You
+            Unlike centralized services, Calestia is governed by its users. You
             own your data, vote on platform upgrades, and access multiple AI
             models in one place—all secured by blockchain. No corporate
             middlemen, no hidden biases.
@@ -53,7 +53,7 @@ const FAQ = () => {
         </AccordionItem>
         <AccordionItem value="item-2">
           <AccordionTrigger className="text-md lg:text-lg">
-            How does Arcalis protect my data privacy?
+            How does Calestia protect my data privacy?
           </AccordionTrigger>
           <AccordionContent>
             We leverage Manta Network’s{" "}
@@ -72,7 +72,7 @@ const FAQ = () => {
             <span className="font-bold">
               (Quadratic Voting + Proof-of-Engagement).
             </span>{" "}
-            Propose ideas, vote on upgrades, and shape Arcalis’ roadmap. Only
+            Propose ideas, vote on upgrades, and shape Calestia’ roadmap. Only
             Visionary-tier users can submit technical proposals (after KYC
             verification).
           </AccordionContent>
@@ -84,12 +84,12 @@ const FAQ = () => {
           <AccordionContent>
             Our proprietary system analyzes your task (text, image, or data) and
             automatically routes it to the best-suited AI model. Prioritize
-            speed, accuracy, or cost—or let Arcalis optimize all three.
+            speed, accuracy, or cost—or let Calestia optimize all three.
           </AccordionContent>
         </AccordionItem>
         <AccordionItem value="item-5">
           <AccordionTrigger className="text-md lg:text-lg">
-            What’s next for Arcalis?
+            What’s next for Calestia?
           </AccordionTrigger>
           <AccordionContent>
             We’re expanding to 10+ AI models, launching decentralized AI

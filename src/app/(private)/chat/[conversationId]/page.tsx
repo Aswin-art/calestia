@@ -14,7 +14,10 @@ const PageChatAiConversation: React.FC<{
 
   return (
     <ErrorBoundary errorComponent={ErrorFallback}>
-      <ChatContainer userId={userAddress} conversationId={conversationId} />
+      <ChatContainer
+        userId={userAddress ? userAddress?.value : null}
+        conversationId={conversationId}
+      />
     </ErrorBoundary>
   );
 };

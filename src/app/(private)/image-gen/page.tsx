@@ -319,7 +319,7 @@ export default function ImageAIPage() {
             <div className="flex items-center gap-3 rounded-lg border border-blue-800 bg-blue-700/20 px-4 py-2">
               <Sparkles className="h-5 w-5 text-blue-500" />
               <h1 className="text-lg font-bold text-gray-100">
-                Arcalis Studio
+                Calestia Studio
               </h1>
             </div>
 
