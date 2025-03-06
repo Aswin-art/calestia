@@ -36,7 +36,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { BASE_MODELS, LORA_MODELS, SAMPLER_OPTIONS } from "./models";
-const currentProgress: number = 0;
 interface LoraConfig {
   model_name: string;
   strength: number;
@@ -97,7 +96,7 @@ export default function ImageAIPage() {
     const today = new Date().toDateString();
 
     if (lastReset !== today) {
-      localStorage.setItem("dailyUsage", JSON.stringify(0)); // Reset penggunaan
+      localStorage.setItem("dailyUsage", JSON.stringify(0));
       localStorage.setItem("lastReset", today);
       setDailyUsage(0);
     }
@@ -152,6 +151,27 @@ export default function ImageAIPage() {
       }));
     }
   }, [isAdvancedMode]);
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+
+    const getRandomInterval = () => {
+      const rand = Math.random();
+      if (rand < 0.1) return 1000;
+      if (rand < 0.8) return 2000 + Math.random() * 1000;
+      if (rand < 1) return 5000;
+    };
+
+    if (loading && realProgress === 0) {
+      interval = setInterval(() => {
+        setFakeProgress((prev) => Math.min(prev + 1, 99));
+      }, getRandomInterval());
+    }
+
+    return () => clearInterval(interval);
+  }, [loading, realProgress]);
+
+  const currentProgress = Math.max(fakeProgress, realProgress);
 
   const toggleLora = (loraValue: string, strength: number = 0.8) => {
     setParams((prev) => {
@@ -582,6 +602,7 @@ export default function ImageAIPage() {
                         </label>
                         <Input
                           type="number"
+                          min={-1}
                           value={params.seed}
                           onChange={(e) =>
                             setParams((p) => ({
@@ -677,7 +698,7 @@ export default function ImageAIPage() {
               </div>
             </div>
 
-            <div className="rounded-xl border-2 border-gray-500 border-neutral-600 bg-neutral-950/50 p-6">
+            <div className="rounded-xl border-2 border-neutral-600 bg-neutral-950/50 p-6">
               <AnimatePresence mode="wait">
                 {images.length > 0 ? (
                   <motion.div
@@ -739,7 +760,7 @@ export default function ImageAIPage() {
           </div>
 
           <Dialog open={modelOpen} onOpenChange={setModelOpen}>
-            <DialogContent className="h-[80vh] max-w-4xl border-gray-700 bg-neutral-800/50">
+            <DialogContent className="h-[80vh] max-w-4xl border-gray-700">
               <DialogHeader>
                 <DialogTitle className="text-2xl text-gray-200">
                   Select Model
