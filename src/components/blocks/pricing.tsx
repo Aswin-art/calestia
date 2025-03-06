@@ -109,6 +109,9 @@ export function Pricing({
   };
 
   const handleBuyPackage = async (name: string) => {
+    return toast("Failed To Vote", {
+      description: "Our bitfinity server is currently down!",
+    });
     setLoading(true);
     if (!address) {
       toast("Connect Your Wallet!", {

@@ -97,6 +97,10 @@ function PricingFeature() {
   };
 
   const handleBuyPackage = async (name: string) => {
+    return toast("Failed To Vote", {
+      description: "Our bitfinity server is currently down!",
+    });
+
     if (!address) {
       toast.error("Wallet client not initialized");
       return;

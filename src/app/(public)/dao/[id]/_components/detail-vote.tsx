@@ -32,6 +32,10 @@ const DetailVote: React.FC<{
   const [loading, setLoading] = useState<boolean>(false);
 
   const handleVote = () => {
+    return toast("Failed To Vote", {
+      description: "Our bitfinity server is currently down!",
+    });
+
     if (!address) {
       setVote(null);
       return toast("Failed To Vote", {
