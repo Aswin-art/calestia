@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { getDefaultConfig } from "@rainbow-me/rainbowkit";
 import { mantaTestnet as originalMantaTestnetWagmi } from "wagmi/chains";
 import {
@@ -55,10 +56,9 @@ export const config = getDefaultConfig({
   appName: "Calestia",
   projectId: "YOUR_PROJECT_ID",
   chains: [
-    customMantaTestnetWagmi,
     bitfinityTestnet,
     ...(process.env.NEXT_PUBLIC_ENABLE_TESTNETS === "true"
-      ? [customMantaTestnetWagmi, bitfinityTestnet]
+      ? [bitfinityTestnet]
       : []),
   ],
   ssr: true,

@@ -202,7 +202,11 @@ const NavigationPublic: React.FC = () => {
                   </Link>
                 </NavigationMenuItem>
                 <NavigationMenuItem>
-                  <Link href="/#" legacyBehavior passHref>
+                  <Link
+                    href="https://docs.google.com/document/d/1shUkg63IJZS5qH2ZFoy7xywzYKmw0fZYTVnFCiES_XQ/edit?usp=sharing"
+                    legacyBehavior
+                    passHref
+                  >
                     <NavigationMenuLink
                       target="_blank"
                       className={cn(
