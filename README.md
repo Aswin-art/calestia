@@ -1,4 +1,4 @@
-                                                                                                  # Calestia
+# Calestia
 
 ## Abstract
 Calestia is a revolutionary decentralized AI platform that integrates blockchain technology, decentralized governance, and a tiered subscription model. Our vision is to create an All-in-One AI Platform—a unified ecosystem where all AI models, AI products, and AI agents are available in one place. No more switching between multiple AI platforms; Calestia brings everything together in a single, seamless experience.
