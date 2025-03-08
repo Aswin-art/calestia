@@ -231,7 +231,7 @@ function PricingFeature() {
                 </p>
                 <br />
                 <p className="mt-8 flex flex-col gap-2 text-xl lg:flex-row lg:items-center">
-                  <span className="text-2xl">0.0002 ETH</span>
+                  <span className="text-2xl">0.0002 BTF</span>
                   <span className="text-muted-foreground text-sm">
                     {" "}
                     / month
@@ -264,7 +264,7 @@ function PricingFeature() {
                   history, and the ability to create governance proposals.
                 </p>
                 <p className="mt-8 flex flex-col gap-2 text-xl lg:flex-row lg:items-center">
-                  <span className="text-2xl">0.0003 ETH</span>
+                  <span className="text-2xl">0.0003 BTF</span>
                   <span className="text-muted-foreground text-sm">
                     {" "}
                     / month
@@ -298,7 +298,7 @@ function PricingFeature() {
                   governance.
                 </p>
                 <p className="mt-8 flex flex-col gap-2 text-xl lg:flex-row lg:items-center">
-                  <span className="text-2xl">0.0004 ETH</span>
+                  <span className="text-2xl">0.0004 BTF</span>
                   <span className="text-muted-foreground text-sm">
                     {" "}
                     / month
