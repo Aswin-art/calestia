@@ -12,37 +12,37 @@ export function FeaturesSectionWithHoverEffects() {
     {
       title: "Dynamic AI Model Ecosystem",
       description:
-        "Access 6+ specialized AI models (and growing) in one platform. From NLP to multimodal reasoning",
+        "Your platform offers access to over 6 specialized AI models that continue to grow, covering various fields such as NLP (Natural Language Processing) and multimodal reasoning.",
       icon: <IconTerminal2 />,
     },
     {
       title: "DAO-Driven Evolution",
       description:
-        "Your voice shapes Calestia. Propose features, vote on upgrades, and earn governance power through engagement.",
+        "Users have a voice in the platform's development through features such as proposing new features, voting on upgrades, and earning governance power through engagement.",
       icon: <IconEaseInOut />,
     },
     {
-      title: "Privacy by Design",
+      title: "Robust Blockchain Infrastructure",
       description:
-        "Powered by Bitfinity Network’s ZKPs, Calestia ensures data confidentiality for sensitive use cases.",
+        "Calestia is built on Bitfinity, a next-generation Layer-2 solution for Bitcoin that offers compatibility with the Ethereum Virtual Machine (EVM).",
       icon: <GlobeLock />,
     },
     {
-      title: "Enterprise-Ready & Scalable",
+      title: "Enhanced On-Chain Privacy",
       description:
-        "Low fees, high throughput (200+ TPS), and Polkadot-based interoperability let businesses deploy AI at scale.",
+        "By utilizing threshold signature schemes, particularly Chain-Key technology, Bitfinity ensures user data privacy and security.",
       icon: <IconCloud />,
     },
     {
       title: "Shared Impact Fund",
       description:
-        "10% of platform fees fund social good. The community votes to support education, open-source AI research, and blockchain literacy programs worldwide.",
+        "10% of platform fees are allocated to support social good. The community can vote to fund education, open-source AI research, and blockchain literacy programs worldwide.",
       icon: <IconRouteAltLeft />,
     },
     {
-      title: "Energy-Efficient Infrastructure",
+      title: "Scalability & Low Fees",
       description:
-        "Committed to environmental sustainability, Calestia operates on Bitfinity's Proof-of-Stake (PoS) consensus, consuming 99% less energy than Bitcoin’s Proof-of-Work. ",
+        "Bitfinity supports over 1,000 transactions per second (TPS) and significantly reduces gas fees compared to layer-1 blockchains like Ethereum. ",
       icon: <Zap />,
     },
   ];
