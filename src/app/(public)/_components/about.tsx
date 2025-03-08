@@ -52,15 +52,6 @@ const About = () => {
               always have access to the latest innovations—without vendor
               lock-in.
             </p>
-            <p>
-              From startups to enterprises, educators to investors, Calestia
-              provides tailored AI solutions that adapt to your needs. Built on
-              Bitfinity Network’s zero-knowledge proofs (ZKPs), we guarantee{" "}
-              <span className="font-bold">enterprise-grade security</span>,{" "}
-              <span className="font-bold">energy efficiency</span>, and
-              <span className="font-bold">cross-chain interoperability</span>,
-              making AI accessible, ethical, and sustainable for everyone.
-            </p>
           </div>
         </div>
       </div>
