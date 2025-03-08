@@ -56,7 +56,7 @@ const FAQ = () => {
             How does Calestia protect my data privacy?
           </AccordionTrigger>
           <AccordionContent>
-            We leverage Manta Network’s{" "}
+            We leverage Bitfinity Network’s{" "}
             <span className="font-bold">zero-knowledge proofs (ZKPs)</span> to
             process AI transactions without exposing sensitive information. Your
             interactions remain encrypted, and data is never sold to third

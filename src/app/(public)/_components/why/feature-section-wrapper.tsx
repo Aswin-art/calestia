@@ -24,7 +24,7 @@ export function FeaturesSectionWithHoverEffects() {
     {
       title: "Privacy by Design",
       description:
-        "Powered by Manta Network’s ZKPs, Calestia ensures data confidentiality for sensitive use cases.",
+        "Powered by Bitfinity Network’s ZKPs, Calestia ensures data confidentiality for sensitive use cases.",
       icon: <GlobeLock />,
     },
     {
@@ -42,7 +42,7 @@ export function FeaturesSectionWithHoverEffects() {
     {
       title: "Energy-Efficient Infrastructure",
       description:
-        "Committed to environmental sustainability, Calestia operates on Manta’s Proof-of-Stake (PoS) consensus, consuming 99% less energy than Bitcoin’s Proof-of-Work. ",
+        "Committed to environmental sustainability, Calestia operates on Bitfinity's Proof-of-Stake (PoS) consensus, consuming 99% less energy than Bitcoin’s Proof-of-Work. ",
       icon: <Zap />,
     },
   ];

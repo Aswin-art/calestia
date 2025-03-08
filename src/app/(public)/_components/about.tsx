@@ -36,7 +36,7 @@ const About = () => {
           <div className="flex flex-col gap-2 text-justify text-sm lg:text-lg">
             <p>
               Calestia is the world’s first decentralized AI platform built on
-              <span className="font-bold"> Manta Network</span>, designed to
+              <span className="font-bold"> Bitfinity Network</span>, designed to
               democratize access to advanced artificial intelligence. We combine
               cutting-edge AI models, blockchain-powered governance, and a
               privacy-first infrastructure to create an all-in-one ecosystem
@@ -55,7 +55,7 @@ const About = () => {
             <p>
               From startups to enterprises, educators to investors, Calestia
               provides tailored AI solutions that adapt to your needs. Built on
-              Manta Network’s zero-knowledge proofs (ZKPs), we guarantee{" "}
+              Bitfinity Network’s zero-knowledge proofs (ZKPs), we guarantee{" "}
               <span className="font-bold">enterprise-grade security</span>,{" "}
               <span className="font-bold">energy efficiency</span>, and
               <span className="font-bold">cross-chain interoperability</span>,
