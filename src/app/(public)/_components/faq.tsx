@@ -51,18 +51,6 @@ const FAQ = () => {
             middlemen, no hidden biases.
           </AccordionContent>
         </AccordionItem>
-        <AccordionItem value="item-2">
-          <AccordionTrigger className="text-md lg:text-lg">
-            How does Calestia protect my data privacy?
-          </AccordionTrigger>
-          <AccordionContent>
-            We leverage Bitfinity Network’s{" "}
-            <span className="font-bold">zero-knowledge proofs (ZKPs)</span> to
-            process AI transactions without exposing sensitive information. Your
-            interactions remain encrypted, and data is never sold to third
-            parties.
-          </AccordionContent>
-        </AccordionItem>
         <AccordionItem value="item-3">
           <AccordionTrigger className="text-md lg:text-lg">
             How does the DAO voting system work?
@@ -92,9 +80,9 @@ const FAQ = () => {
             What’s next for Calestia?
           </AccordionTrigger>
           <AccordionContent>
-            We’re expanding to 10+ AI models, launching decentralized AI
-            training, and integrating with Ethereum/Polygon. Join our beta to
-            test new features and earn governance rewards!
+            We’re expanding to 10+ AI models and launching decentralized AI
+            training. Join our beta to test new features and earn governance
+            rewards!
           </AccordionContent>
         </AccordionItem>
       </Accordion>
